@@ -67,15 +67,21 @@
     <p id="error" hidden></p>
     <script>
       const canvas = document.querySelector('#game'), ctx = canvas.getContext('2d');
-      const errorBox = document.querySelector('#error'), audio = new Audio('music.mp3'), background = new Image();
+      const errorBox = document.querySelector('#error'), audio = new Audio('BGM/music.mp3'), background = new Image();
+      const resultImages = {
+        redo: Object.assign(new Image(), { src: 'IMAGE/redo.png' }),
+        good: Object.assign(new Image(), { src: 'IMAGE/good.png' }),
+        high_level: Object.assign(new Image(), { src: 'IMAGE/high_level.png' }),
+      };
       // iPhone / Android ではユーザー操作からの明示的な再生が必要。
       audio.preload = 'auto';
       audio.playsInline = true;
       audio.volume = 1;
       audio.load();
-      background.src = 'background.png';
+      background.src = 'IMAGE/background.png';
       let notes = [], blocks = [], next = 0, misses = 0, started = false, message = 'クリックまたはキー入力で開始', until = Infinity;
       const fail = e => { errorBox.hidden = false; errorBox.textContent = `読み込みエラー: ${e.message}（HTTPサーバーから開いてください）`; };
+      let resultWaitStarted = null, result = null;
       const musicTime = () => started ? audio.currentTime : 0;
       async function loadNotes() {
         const response = await fetch('main.py');
@@ -133,6 +139,14 @@
         }
         blocks = blocks.filter(item => !item.removedAt || performance.now() - item.removedAt < 170);
       }
+      function showResult() {
+        const type = misses >= 15 ? 'redo' : misses >= 4 ? 'good' : 'high_level';
+        result = type;
+        audio.pause();
+        audio.src = `BGM/${type}.mp3`;
+        audio.currentTime = 0;
+        audio.play().catch(error => console.error('Result BGM failed:', error));
+      }
       function drawBlock(x, angle, scale = 1, dotColor = '#fff', height = 85) {
         ctx.save();
         ctx.translate(x + 42.5, 242.5);
@@ -148,9 +162,20 @@
         ctx.fill(); ctx.stroke(); ctx.restore(); ctx.restore();
       }
       function frame() {
-        const now = musicTime(); update(now); ctx.clearRect(0, 0, 800, 600);
+        const now = musicTime();
+        if (!result) {
+          update(now);
+          if (next === notes.length && blocks.length === 0) {
+            if (resultWaitStarted === null) resultWaitStarted = performance.now();
+            else if (performance.now() - resultWaitStarted >= 3000) showResult();
+          }
+        }
+        ctx.clearRect(0, 0, 800, 600);
         if (background.complete && background.naturalWidth) ctx.drawImage(background, 0, 0, 800, 600);
-        for (const item of blocks) {
+        if (result) {
+          const image = resultImages[result];
+          if (image.complete && image.naturalWidth) ctx.drawImage(image, 0, 0, 800, 600);
+        } else for (const item of blocks) {
           const p = Math.max(0, (now - item.start) / (item.end - item.start));
           const left = -90 + 450 * p, right = 800 - 450 * p, rotation = 450 * p;
           if (!item.removing) {
