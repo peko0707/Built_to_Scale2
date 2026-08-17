@@ -90,7 +90,7 @@
         try {
           audio.muted = false;
           audio.volume = 1;
-          await audio.play().catch(() => {});
+          await audio.play().catch(fail);
           // play() が成功してから開始済みにする。失敗時は次のタップで再試行できる。
           started = true;
           message = '';
