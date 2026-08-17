@@ -12,7 +12,10 @@ try:
 except:
     BASE_DIR = "/"
 
-background_path = os.path.join(BASE_DIR, "background.png")
+IMAGE_DIR = os.path.join(BASE_DIR, "IMAGE")
+BGM_DIR = os.path.join(BASE_DIR, "BGM")
+
+background_path = os.path.join(IMAGE_DIR, "background.png")
 try:
     background = pygame.image.load(background_path).convert()
 except:
@@ -29,7 +32,7 @@ font = pygame.font.Font(None, 36)
 
 pygame.mixer.init()
 
-music_path = os.path.join(BASE_DIR, "music.mp3")
+music_path = os.path.join(BGM_DIR, "music.mp3")
 try:
     pygame.mixer.music.load(music_path)
 except Exception as e:
@@ -43,6 +46,8 @@ text = None
 text_time = 0
 
 miss_count = 0
+result_image = None
+result_delay_start = None
 
 next_note = 0
 move_time = 0
@@ -322,6 +327,16 @@ def judgement(pair):
         return text, text_time
     return None
 
+def load_result_image(filename):
+    """結果画像を画面全体に収まるサイズで読み込む。"""
+    image = pygame.image.load(os.path.join(IMAGE_DIR, filename)).convert()
+    return pygame.transform.scale(image, screen.get_size())
+
+def play_result_bgm(filename):
+    """結果画面用のBGMに切り替える。"""
+    pygame.mixer.music.load(os.path.join(BGM_DIR, filename))
+    pygame.mixer.music.play()
+
 running = True
 
 pygame.mixer.music.play()
@@ -357,6 +372,27 @@ while running:
     now = pygame.time.get_ticks()
     
     music_time = pygame.mixer.music.get_pos() / 1000
+
+    # すべてのノーツが判定・削除された後、3秒待って結果画面へ切り替える。
+    if next_note == len(notes) and not block and result_image is None:
+        if result_delay_start is None:
+            result_delay_start = now
+        elif now - result_delay_start >= 3000:
+            if miss_count >= 15:
+                result_image = load_result_image("redo.png")
+                play_result_bgm("redo.mp3")
+            elif miss_count >= 4:
+                result_image = load_result_image("good.png")
+                play_result_bgm("good.mp3")
+            else:
+                result_image = load_result_image("high_level.png")
+                play_result_bgm("high_level.mp3")
+
+    if result_image is not None:
+        screen.blit(result_image, (0, 0))
+        pygame.display.flip()
+        continue
+
     if next_note < len(notes) and music_time >= notes[next_note]["start"]:
         note = notes[next_note]
         
