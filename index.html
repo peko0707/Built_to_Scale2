@@ -90,14 +90,14 @@
         try {
           audio.muted = false;
           audio.volume = 1;
-          await audio.play().catch(fail);
+          await audio.play();
           // play() が成功してから開始済みにする。失敗時は次のタップで再試行できる。
           started = true;
           message = '';
           until = 0;
         } catch (error) {
-          fail(new Error('音楽を再生できません。消音設定を解除して、もう一度タップしてください。'));
           console.error(error);
+          fail(new Error('音楽を再生できません。もう一度タップしてください。'));
         }
       }
       function press() {
