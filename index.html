@@ -7,17 +7,32 @@
     <style>
         body {
             margin: 0;
-            padding: 0;
+            padding: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             background-color: #333;
             font-family: Arial, sans-serif;
+            box-sizing: border-box;
+            overscroll-behavior: none;
         }
         canvas {
             display: block;
             border: 2px solid #666;
+            width: min(800px, calc(100vw - 20px));
+            height: auto;
+            max-height: calc(100dvh - 20px);
+            aspect-ratio: 4 / 3;
+            object-fit: contain;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        #error {
+            color: white;
+            max-width: 800px;
         }
     </style>
 </head>
@@ -53,6 +68,11 @@
     <script>
       const canvas = document.querySelector('#game'), ctx = canvas.getContext('2d');
       const errorBox = document.querySelector('#error'), audio = new Audio('music.mp3'), background = new Image();
+      // iPhone / Android ではユーザー操作からの明示的な再生が必要。
+      audio.preload = 'auto';
+      audio.playsInline = true;
+      audio.volume = 1;
+      audio.load();
       background.src = 'background.png';
       let notes = [], blocks = [], next = 0, misses = 0, started = false, message = 'クリックまたはキー入力で開始', until = Infinity;
       const fail = e => { errorBox.hidden = false; errorBox.textContent = `読み込みエラー: ${e.message}（HTTPサーバーから開いてください）`; };
@@ -66,8 +86,22 @@
         // Python のリスト末尾にあるカンマを JSON 用に取り除く。
         notes = JSON.parse(found[1].replace(/,\s*\]$/, ']'));
       }
+      async function startGame() {
+        try {
+          audio.muted = false;
+          audio.volume = 1;
+          await audio.play();
+          // play() が成功してから開始済みにする。失敗時は次のタップで再試行できる。
+          started = true;
+          message = '';
+          until = 0;
+        } catch (error) {
+          fail(new Error('音楽を再生できません。消音設定を解除して、もう一度タップしてください。'));
+          console.error(error);
+        }
+      }
       function press() {
-        if (!started) { started = true; message = ''; until = 0; audio.play().catch(fail); return; }
+        if (!started) { startGame(); return; }
         const now = musicTime(); let target, best = Infinity;
         for (const item of blocks) { const diff = Math.abs(now - item.end); if (!item.removing && diff <= .55 && diff < best) { target = item; best = diff; } }
         if (!target) return;
@@ -138,6 +172,8 @@
         requestAnimationFrame(frame);
       }
       canvas.addEventListener('pointerdown', press);
+      // 長押し時のメニューやダブルタップのズームをゲーム操作に干渉させない。
+      canvas.addEventListener('contextmenu', event => event.preventDefault());
       window.addEventListener('keydown', event => { event.preventDefault(); press(); });
       loadNotes().then(frame).catch(fail);
     </script>
