@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,46 +12,75 @@
 
 <body>
 
-    <div class="launcher">
+<div class="launcher">
 
-        <h1>Rhythm Game Launcher</h1>
+    <h1>Rhythm Game Launcher</h1>
 
-        <div class="content">
+    <div class="content">
 
-            <!-- ゲーム一覧 -->
-            <div class="games">
+        <div class="games">
 
-                <button class="game-button available"
-                        onclick="openGame('Built_to_Scale2')">
+            <button
+                class="game-button"
+                onclick="openGame('Built_to_Scale2')">
 
-                    <span class="game-name">
-                        Built to Scale 2
-                    </span>
+                <span class="game-name">
+                    Built to Scale 2
+                </span>
 
-                    <span class="record" id="built-record"></span>
+                <span
+                    id="built-record"
+                    class="record">
+                </span>
 
-                </button>
+            </button>
 
+            <button
+                class="game-button"
+                onclick="showComingSoon('Terrible Ninja')">
 
-                <button class="game-button coming-soon"
-                        onclick="showComingSoon('Terrible Ninja')">
+                <span class="game-name">
+                    Terrible Ninja
+                </span>
 
-                    <span class="game-name">
-                        Terrible Ninja
-                    </span>
+            </button>
 
-                </button>
+        </div>
 
-            </div>
+        <div class="ranking">
 
+            <h2>Ranking</h2>
 
-            <!-- Ranking -->
-            <div class="ranking">
+            <div class="ranking-box">
 
-                <h2>Ranking</h2>
+                <div class="ranking-item">
+                    <span class="rank">1</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
 
-                <div class="ranking-box">
-                    <span>(Ranking content)</span>
+                <div class="ranking-item">
+                    <span class="rank">2</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
+
+                <div class="ranking-item">
+                    <span class="rank">3</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
+
+                <div class="ranking-item">
+                    <span class="rank">4</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
+
+                <div class="ranking-item">
+                    <span class="rank">5</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
                 </div>
 
             </div>
@@ -59,18 +89,22 @@
 
     </div>
 
+</div>
 
-    <!-- 作成中メッセージ -->
-    <div id="overlay" class="overlay">
 
-        <div id="coming-message" class="coming-message">
-            Terrible Ninjaは作成中です
-        </div>
+<div
+    id="overlay"
+    class="overlay">
 
+    <div
+        id="coming-message"
+        class="coming-message">
     </div>
 
+</div>
 
-    <script src="script.js"></script>
+
+<script src="script.js"></script>
 
 </body>
 </html>
