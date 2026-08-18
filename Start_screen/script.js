@@ -18,7 +18,7 @@ function openGame(gameName) {
          * Built_to_Scale2
          */
 
-        window.location.href = "../Built_to_Scale2/";
+        window.location.href = "../Built_to_Scale2/index.html";
     }
 }
 
