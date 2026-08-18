@@ -1,104 +1,110 @@
-// ==========================================
-// ゲーム起動
-// ==========================================
+<!DOCTYPE html>
+<html lang="ja">
 
-function openGame(gameName) {
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    if (gameName === "Built_to_Scale2") {
+    <title>Rhythm Game Launcher</title>
 
-        /*
-         * Start_screen/index.html
-         *
-         *      ↓ ../
-         *
-         * GitHubリポジトリ
-         *
-         *      ↓ Built_to_Scale2/
-         *
-         * Built_to_Scale2
-         */
+    <link rel="stylesheet" href="style.css">
+</head>
 
-        window.location.href = "../Built_to_Scale2/index.html";
-    }
-}
+<body>
 
+<div class="launcher">
 
-// ==========================================
-// 作成中表示
-// ==========================================
+    <h1>Rhythm Game Launcher</h1>
 
-let comingSoonTimer = null;
+    <div class="content">
 
+        <div class="games">
 
-function showComingSoon(gameName) {
+            <button
+                class="game-button"
+                onclick="openGame('Built_to_Scale2')">
 
-    const overlay =
-        document.getElementById("overlay");
+                <span class="game-name">
+                    Built to Scale 2
+                </span>
 
-    const message =
-        document.getElementById("coming-message");
+                <span
+                    id="built-record"
+                    class="record">
+                </span>
 
+            </button>
 
-    message.textContent =
-        gameName + "は作成中です";
+            <button
+                class="game-button"
+                onclick="showComingSoon('Terrible Ninja')">
 
+                <span class="game-name">
+                    Terrible Ninja
+                </span>
 
-    overlay.classList.add("show");
+            </button>
 
+        </div>
 
-    // 以前のタイマーを削除
-    if (comingSoonTimer !== null) {
+        <div class="ranking">
 
-        clearTimeout(comingSoonTimer);
-    }
+            <h2>Ranking</h2>
 
+            <div class="ranking-box">
 
-    // 2秒後に消す
-    comingSoonTimer = setTimeout(function () {
+                <div class="ranking-item">
+                    <span class="rank">1</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
 
-        overlay.classList.remove("show");
+                <div class="ranking-item">
+                    <span class="rank">2</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
 
-    }, 2000);
-}
+                <div class="ranking-item">
+                    <span class="rank">3</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
 
+                <div class="ranking-item">
+                    <span class="rank">4</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
 
-// ==========================================
-// 最高記録
-// ==========================================
+                <div class="ranking-item">
+                    <span class="rank">5</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
 
-async function loadBestRecord() {
+            </div>
 
-    try {
+        </div>
 
-        const response =
-            await fetch("../Built_to_Scale2/record.json");
+    </div>
 
-
-        if (!response.ok) {
-
-            return;
-        }
-
-
-        const data =
-            await response.json();
-
-
-        if (data.best_miss !== undefined) {
-
-            document.getElementById(
-                "built-record"
-            ).textContent =
-                data.best_miss + " miss";
-        }
-
-    } catch (error) {
-
-        console.log(
-            "record.jsonが見つかりません"
-        );
-    }
-}
+</div>
 
 
-loadBestRecord();
+<div
+    id="overlay"
+    class="overlay">
+
+    <div
+        id="coming-message"
+        class="coming-message">
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
