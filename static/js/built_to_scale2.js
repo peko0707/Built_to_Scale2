@@ -298,13 +298,13 @@ function drawPair(block) {
         drawBlock(
             normalBlock,
             block.l_x,
-            -block.angle
+            block.angle
         );
 
         drawBlock(
             normalBlock,
             block.r_x,
-            block.angle
+            -block.angle
         );
 
         return;
@@ -753,90 +753,104 @@ async function saveRecord() {
 
 async function showResult() {
 
-    if (
-        gameState.resultShown
-    ) {
+    if (gameState.resultShown) {
         return;
     }
 
-
     gameState.resultShown = true;
-
     gameState.playing = false;
 
-
-    /*
-       音楽停止
-    */
-
+    // ゲーム音楽を停止
     if (audio) {
         audio.pause();
     }
 
-
     await saveRecord();
 
-
     const resultScreen =
-        document.getElementById(
-            "resultScreen"
-        );
-
-
-    const resultTitle =
-        document.getElementById(
-            "resultTitle"
-        );
-
+        document.getElementById("resultScreen");
 
     const finalMissCount =
-        document.getElementById(
-            "finalMissCount"
-        );
+        document.getElementById("finalMissCount");
+
+    const resultImage =
+        document.getElementById("resultImage");
 
 
-    finalMissCount.textContent =
-        gameState.missCount;
+    // MISS数を表示
+    if (finalMissCount) {
+        finalMissCount.textContent =
+            gameState.missCount;
+    }
 
 
-    if (
-        gameState.missCount >= 15
-    ) {
+    // 結果画像・結果音声
+    let resultImagePath;
+    let resultAudioPath;
 
-        resultTitle.textContent =
-            "Redo...";
 
-        resultTitle.style.color =
-            "#ff6b6b";
+    if (gameState.missCount >= 16) {
+
+        // 16 MISS以上 → REDO
+        resultImagePath =
+            "/static/images/redo.png";
+
+        resultAudioPath =
+            "/static/audio/redo.mp3";
 
     }
 
-    else if (
-        gameState.missCount >= 4
-    ) {
+    else if (gameState.missCount >= 4) {
 
-        resultTitle.textContent =
-            "Good!";
+        // 4～15 MISS → GOOD
+        resultImagePath =
+            "/static/images/good.png";
 
-        resultTitle.style.color =
-            "#FFD700";
+        resultAudioPath =
+            "/static/audio/good.mp3";
 
     }
 
     else {
 
-        resultTitle.textContent =
-            "High Level!";
+        // 0～3 MISS → HIGH LEVEL
+        resultImagePath =
+            "/static/images/high_level.png";
 
-        resultTitle.style.color =
-            "#4CAF50";
+        resultAudioPath =
+            "/static/audio/high_level.mp3";
     }
 
 
-    resultScreen.style.display =
-        "flex";
-}
+    // 結果画像を表示
+    if (resultImage) {
+        resultImage.src = resultImagePath;
+    }
 
+
+    // 結果音声を再生
+    const resultAudio =
+        new Audio(resultAudioPath);
+
+    resultAudio.preload = "auto";
+
+    try {
+        await resultAudio.play();
+    }
+
+    catch (error) {
+        console.error(
+            "結果音声の再生エラー:",
+            error
+        );
+    }
+
+
+    // 結果画面を表示
+    if (resultScreen) {
+        resultScreen.style.display = "flex";
+    }
+}
 
 /* =========================================
    ゲームループ
