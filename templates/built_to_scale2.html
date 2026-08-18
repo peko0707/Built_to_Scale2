@@ -1,41 +1,148 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Built to Scale 2 - Web Version</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/game.css') }}"
+    >
 </head>
+
 <body>
+
     <div class="game-container">
-        <!-- ゲーム画面 -->
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
 
-        <!-- UI層 -->
+        <!-- =========================================
+             ゲーム画面
+        ========================================== -->
+
+        <canvas
+            id="gameCanvas"
+            width="800"
+            height="600">
+        </canvas>
+
+
+        <!-- =========================================
+             UI
+        ========================================== -->
+
         <div class="game-ui">
+
+
+            <!-- MISS / BEST -->
+
             <div class="game-info">
-                <div class="miss-counter">MISS: <span id="missCount">0</span></div>
-                <div class="best-record">BEST: <span id="bestRecord">--</span></div>
-            </div>
 
-            <!-- 評価テキスト -->
-            <div id="evaluationText" class="evaluation-text"></div>
-
-            <!-- 結果画面 -->
-            <div id="resultScreen" class="result-screen" style="display: none;">
-                <div class="result-content">
-                    <h2 id="resultTitle">Game Over</h2>
-                    <p>MISS COUNT: <span id="finalMissCount">0</span></p>
-                    <div class="result-buttons">
-                        <button onclick="location.href='/launcher'">ランチャーに戻る</button>
-                        <button onclick="location.reload()">もう一度プレイ</button>
-                    </div>
+                <div class="miss-counter">
+                    MISS:
+                    <span id="missCount">0</span>
                 </div>
+
+                <div class="best-record">
+                    BEST:
+                    <span id="bestRecord">--</span>
+                </div>
+
             </div>
+
+
+            <!-- =========================================
+                 Perfect / Miss
+            ========================================== -->
+
+            <div
+                id="evaluationText"
+                class="evaluation-text">
+            </div>
+
+
+            <!-- =========================================
+                 結果画面
+            ========================================== -->
+
+            <div
+                id="resultScreen"
+                class="result-screen"
+                style="display: none;">
+
+                <div class="result-content">
+
+
+                    <!-- 結果タイトル -->
+
+                    <h2 id="resultTitle"></h2>
+
+
+                    <!-- 結果画像 -->
+
+                    <img
+                        id="resultImage"
+                        src="/static/images/high_level.png"
+                        alt="Result"
+                    >
+
+
+                    <!-- MISS数 -->
+
+                    <p>
+                        MISS COUNT:
+                        <span id="finalMissCount">
+                            0
+                        </span>
+                    </p>
+
+
+                    <!-- ボタン -->
+
+                    <div class="result-buttons">
+
+                        <button
+                            type="button"
+                            onclick="location.href='/launcher'">
+                            ランチャーに戻る
+                        </button>
+
+
+                        <button
+                            type="button"
+                            onclick="location.reload()">
+                            もう一度プレイ
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
+
     </div>
 
-    <script src="{{ url_for('static', filename='js/game_data.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/built_to_scale2.js') }}"></script>
+
+    <!-- =========================================
+         譜面データ
+    ========================================== -->
+
+    <script
+        src="{{ url_for('static', filename='js/game_data.js') }}">
+    </script>
+
+
+    <!-- =========================================
+         ゲーム本体
+    ========================================== -->
+
+    <script
+        src="{{ url_for('static', filename='js/built_to_scale2.js') }}">
+    </script>
+
 </body>
+
 </html>
