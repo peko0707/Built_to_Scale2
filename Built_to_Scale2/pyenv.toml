@@ -1,0 +1,10 @@
+[build]
+modules = ["pygame"]
+
+[[fetch]]
+url = "music.mp3"
+path = "."
+
+[[fetch]]
+url = "background.png"
+path = "."

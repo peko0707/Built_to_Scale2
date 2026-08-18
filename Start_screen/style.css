@@ -1,0 +1,336 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+
+    background: rgb(20, 20, 30);
+
+    color: white;
+
+    font-family:
+        "Meiryo",
+        "Yu Gothic",
+        sans-serif;
+
+    overflow-x: hidden;
+}
+
+
+/* ==========================================
+   全体
+   ========================================== */
+
+.launcher {
+    width: 100%;
+    max-width: 1200px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+
+/* ==========================================
+   タイトル
+   ========================================== */
+
+h1 {
+
+    margin: 0;
+
+    text-align: center;
+
+    font-size: 48px;
+    font-weight: bold;
+
+    color: rgb(255, 255, 255);
+}
+
+
+/* ==========================================
+   左右のコンテンツ
+   ========================================== */
+
+.content {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 100px;
+
+    padding: 0 50px;
+}
+
+
+/* ==========================================
+   ゲーム一覧
+   ========================================== */
+
+.games {
+
+    width: 450px;
+}
+
+
+/* ==========================================
+   ゲームボタン
+   ========================================== */
+
+.game-button {
+
+    position: relative;
+
+    display: block;
+
+    width: 400px;
+    height: 70px;
+
+    margin-bottom: 30px;
+
+    padding: 0 20px;
+
+    border: 3px solid rgb(200, 200, 200);
+
+    border-radius: 10px;
+
+    background: rgb(60, 80, 200);
+
+    color: rgb(200, 200, 200);
+
+    font-family:
+        "Meiryo",
+        "Yu Gothic",
+        sans-serif;
+
+    font-size: 32px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.1s,
+        color 0.1s,
+        border-color 0.1s;
+}
+
+
+/* ホバー */
+
+.game-button:hover {
+
+    background: rgb(100, 120, 255);
+
+    border-color: rgb(255, 255, 100);
+
+    color: rgb(255, 255, 100);
+}
+
+
+/* ゲーム名 */
+
+.game-name {
+
+    position: absolute;
+
+    left: 20px;
+    top: 13px;
+}
+
+
+/* 最高記録 */
+
+.record {
+
+    position: absolute;
+
+    right: 20px;
+    top: 20px;
+
+    font-size: 20px;
+
+    color: rgb(100, 200, 100);
+}
+
+
+/* ==========================================
+   Ranking
+   ========================================== */
+
+.ranking {
+
+    width: 500px;
+}
+
+
+.ranking h2 {
+
+    margin: 0 0 20px 0;
+
+    font-size: 32px;
+
+    color: rgb(255, 255, 255);
+}
+
+
+.ranking-box {
+
+    width: 500px;
+    height: 500px;
+
+    border: 2px solid rgb(200, 200, 200);
+
+    padding: 20px;
+
+    color: rgb(150, 150, 150);
+
+    font-size: 20px;
+}
+
+
+/* ==========================================
+   作成中オーバーレイ
+   ========================================== */
+
+.overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.78);
+
+    z-index: 1000;
+}
+
+
+.overlay.show {
+
+    display: flex;
+}
+
+
+.coming-message {
+
+    color: rgb(255, 100, 100);
+
+    font-size: 48px;
+
+    text-align: center;
+}
+
+
+/* ==========================================
+   スマホ対応
+   ========================================== */
+
+@media (max-width: 900px) {
+
+    .launcher {
+        width: 100%;
+        min-height: 100vh;
+        padding: 20px 15px;
+    }
+
+    h1 {
+        font-size: 32px;
+        margin-bottom: 30px;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+        padding: 0;
+    }
+
+    .games {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .game-button {
+        width: 100%;
+        height: 65px;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+
+    .game-name {
+        left: 15px;
+        top: 15px;
+    }
+
+    .record {
+        right: 15px;
+        top: 20px;
+        font-size: 16px;
+    }
+
+    .ranking {
+        width: 100%;
+        max-width: 500px;
+        margin-top: 30px;
+    }
+
+    .ranking h2 {
+        font-size: 26px;
+    }
+
+    .ranking-box {
+        width: 100%;
+        height: 300px;
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    .coming-message {
+        font-size: 28px;
+        padding: 20px;
+    }
+.ranking-item {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    height: 65px;
+
+    margin-bottom: 10px;
+    padding: 0 15px;
+
+    border-radius: 8px;
+
+    background: rgb(35, 35, 50);
+
+    font-size: 22px;
+    }
+
+    .rank {
+        width: 45px;
+
+        font-size: 26px;
+        font-weight: bold;
+
+        text-align: center;
+    }
+
+    .player {
+        flex: 1;
+
+        margin-left: 15px;
+    }
+
+    .score {
+        font-size: 18px;
+
+        color: rgb(100, 200, 100);
+    }
+}

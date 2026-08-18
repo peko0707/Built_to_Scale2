@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Rhythm Game Launcher</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="launcher">
+
+    <h1>Rhythm Game Launcher</h1>
+
+    <div class="content">
+
+        <div class="games">
+
+            <button
+                class="game-button"
+                onclick="openGame('Built_to_Scale2')">
+
+                <span class="game-name">
+                    Built to Scale 2
+                </span>
+
+                <span
+                    id="built-record"
+                    class="record">
+                </span>
+
+            </button>
+
+            <button
+                class="game-button"
+                onclick="showComingSoon('Terrible Ninja')">
+
+                <span class="game-name">
+                    Terrible Ninja
+                </span>
+
+            </button>
+
+        </div>
+
+        <div class="ranking">
+
+            <h2>Ranking</h2>
+
+            <div class="ranking-box">
+
+                <div class="ranking-item">
+                    <span class="rank">1</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
+
+                <div class="ranking-item">
+                    <span class="rank">2</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
+
+                <div class="ranking-item">
+                    <span class="rank">3</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
+
+                <div class="ranking-item">
+                    <span class="rank">4</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
+
+                <div class="ranking-item">
+                    <span class="rank">5</span>
+                    <span class="player">---</span>
+                    <span class="score">0 miss</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div
+    id="overlay"
+    class="overlay">
+
+    <div
+        id="coming-message"
+        class="coming-message">
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>

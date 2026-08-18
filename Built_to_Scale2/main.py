@@ -1,0 +1,514 @@
+import pygame
+import os
+import random
+import json
+
+pygame.init()
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Built to Scale 2")
+
+# ウェブ環境用: ファイルパスの処理
+try:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+except:
+    BASE_DIR = "/"
+
+IMAGE_DIR = os.path.join(BASE_DIR, "IMAGE")
+BGM_DIR = os.path.join(BASE_DIR, "BGM")
+
+# ==========================================
+# スコア記録ファイル
+# ==========================================
+
+RECORD_FILE = os.path.join(BASE_DIR, "record.json")
+
+def load_best_record():
+    """ベストスコアを読み込む"""
+    if os.path.isfile(RECORD_FILE):
+        try:
+            with open(RECORD_FILE, "r") as f:
+                data = json.load(f)
+                return data.get("best_miss", float("inf"))
+        except:
+            return float("inf")
+    return float("inf")
+
+def save_best_record(miss_count):
+    """ベストスコアを保存"""
+    best_miss = load_best_record()
+    
+    # 現在のミス数がベストより少なかったら更新
+    if miss_count < best_miss:
+        data = {"best_miss": miss_count}
+        with open(RECORD_FILE, "w") as f:
+            json.dump(data, f, indent=2)
+        return True  # 更新されたflag
+    return False
+
+# ゲーム開始時にベストスコアを読み込む
+best_miss = load_best_record()
+
+background_path = os.path.join(IMAGE_DIR, "background.png")
+try:
+    background = pygame.image.load(background_path).convert()
+except:
+    # フォールバック: コンバートなしで読み込み
+    background = pygame.image.load(background_path)
+
+zoom = 0.555555
+
+width = int(background.get_width() * zoom)
+height = int(background.get_height() * zoom)
+background = pygame.transform.scale(background, (width, height))
+font = pygame.font.Font(None, 36)
+
+
+pygame.mixer.init()
+
+music_path = os.path.join(BGM_DIR, "music.mp3")
+try:
+    pygame.mixer.music.load(music_path)
+except Exception as e:
+    print(f"Note: Could not load music: {e}")
+
+l_x = -90
+r_x = 800
+last_time = pygame.time.get_ticks()
+restart_time = 0
+text = None
+text_time = 0
+
+miss_count = 0
+result_image = None
+result_delay_start = None
+
+next_note = 0
+move_time = 0
+notes = [
+    {"start": 4.689, "end": 4.789},
+    {"start": 5.255, "end": 7.195},
+    {"start": 8.451, "end": 9.087},
+    {"start": 9.368, "end": 9.985},
+    {"start": 10.287, "end": 12.733},
+    {"start": 12.725, "end": 14.005},
+    {"start": 14.189, "end": 14.889},
+    {"start": 15.197, "end": 17.026},
+    {"start": 17.331, "end": 17.937},
+    {"start": 18.255, "end": 18.794},
+    {"start": 19.179, "end": 19.780},
+    {"start": 20.082, "end": 21.915},
+    {"start": 22.367, "end": 23.610},
+    {"start": 24.062, "end": 24.680},
+    {"start": 24.989, "end": 26.827},
+    {"start": 28.353, "end": 28.673},
+    {"start": 28.797, "end": 29.118},
+    {"start": 29.234, "end": 29.576},
+    {"start": 29.889, "end": 32.319},
+    {"start": 32.317, "end": 33.548},
+    {"start": 33.853, "end": 34.481},
+    {"start": 34.782, "end": 36.618},
+    {"start": 39.679, "end": 41.522},
+    {"start": 41.977, "end": 43.958},
+    {"start": 48.995, "end": 50.369},
+    {"start": 49.685, "end": 50.151},
+    {"start": 50.827, "end": 52.188},
+    {"start": 51.496, "end": 51.962},
+    {"start": 52.646, "end": 54.007},
+    {"start": 53.021, "end": 53.549},
+    {"start": 54.231, "end": 55.592},
+    {"start": 54.457, "end": 55.850},
+    {"start": 56.282, "end": 57.642},
+    {"start": 56.384, "end": 57.756},
+    {"start": 58.098, "end": 59.451},
+    {"start": 58.200, "end": 59.566},
+    {"start": 58.297, "end": 59.680},
+    {"start": 59.677, "end": 61.059},
+    {"start": 59.785, "end": 61.162},
+    {"start": 59.876, "end": 61.275},
+    {"start": 61.496, "end": 62.415},
+    {"start": 61.601, "end": 62.515},
+    {"start": 63.312, "end": 64.681},
+    {"start": 63.593, "end": 65.007},
+    {"start": 63.703, "end": 65.104},
+    {"start": 65.463, "end": 65.595},
+    {"start": 65.597, "end": 65.727},
+    {"start": 65.727, "end": 65.837},
+    {"start": 65.837, "end": 65.967},
+    {"start": 65.969, "end": 66.091},
+    {"start": 66.948, "end": 68.772},
+    {"start": 66.950, "end": 67.400},
+    {"start": 67.869, "end": 68.317},
+    {"start": 68.772, "end": 69.661},
+    {"start": 69.659, "end": 70.365},
+    {"start": 70.699, "end": 72.003},
+    {"start": 70.796, "end": 72.095},
+    {"start": 71.001, "end": 72.299},
+    {"start": 72.863, "end": 73.313},
+    {"start": 73.660, "end": 73.763},
+    {"start": 74.202, "end": 75.609},
+    {"start": 76.032, "end": 76.832},
+    {"start": 77.728, "end": 77.828},
+    {"start": 77.828, "end": 77.938},
+    {"start": 77.936, "end": 78.043},
+    {"start": 78.043, "end": 78.154},
+    {"start": 78.154, "end": 78.259},
+    {"start": 78.259, "end": 78.375},
+    {"start": 78.375, "end": 78.477},
+    {"start": 78.477, "end": 78.596},
+    {"start": 78.596, "end": 78.717},
+    {"start": 78.720, "end": 78.825},
+    {"start": 78.825, "end": 78.933},
+    {"start": 78.933, "end": 79.046},
+    {"start": 79.046, "end": 79.156},
+    {"start": 79.660, "end": 81.032},
+    {"start": 80.011, "end": 80.126},
+    {"start": 80.458, "end": 80.593},
+    {"start": 80.711, "end": 80.857},
+    {"start": 81.253, "end": 81.722},
+    {"start": 81.959, "end": 82.393},
+    {"start": 82.638, "end": 83.075},
+    {"start": 83.252, "end": 83.341},
+    {"start": 83.681, "end": 83.762},
+    {"start": 84.085, "end": 84.174},
+    {"start": 84.551, "end": 84.643},
+    {"start": 85.028, "end": 85.123},
+    {"start": 85.341, "end": 85.430},
+    {"start": 85.659, "end": 85.751},
+    {"start": 85.945, "end": 86.028},
+    {"start": 86.314, "end": 86.395},
+    {"start": 86.624, "end": 86.715},
+    {"start": 87.284, "end": 87.394},
+    {"start": 87.284, "end": 88.308},
+    {"start": 87.731, "end": 87.844},
+    {"start": 88.526, "end": 88.982},
+    {"start": 89.221, "end": 89.642},
+    {"start": 89.882, "end": 90.340},
+    {"start": 90.499, "end": 90.625},
+    {"start": 90.693, "end": 90.846},
+    {"start": 90.941, "end": 91.078},
+    {"start": 91.383, "end": 91.547},
+    {"start": 91.844, "end": 91.965},
+    {"start": 92.160, "end": 95.784},
+    {"start": 92.160, "end": 92.286},
+    {"start": 92.286, "end": 92.416},
+    {"start": 92.416, "end": 92.526},
+    {"start": 92.526, "end": 92.637},
+    {"start": 92.637, "end": 92.752},
+    {"start": 92.752, "end": 92.855},
+    {"start": 92.855, "end": 92.973},
+    {"start": 92.971, "end": 93.100},
+    {"start": 93.100, "end": 93.227},
+    {"start": 93.227, "end": 93.337},
+    {"start": 93.337, "end": 93.448},
+    {"start": 93.448, "end": 93.558},
+    {"start": 93.556, "end": 93.671},
+    {"start": 93.671, "end": 93.795},
+    {"start": 93.795, "end": 93.925},
+    {"start": 93.919, "end": 94.033},
+    {"start": 94.035, "end": 94.140},
+    {"start": 94.140, "end": 94.248},
+    {"start": 94.248, "end": 94.364},
+    {"start": 94.367, "end": 94.474},
+    {"start": 94.474, "end": 94.596},
+    {"start": 94.596, "end": 94.725},
+    {"start": 94.722, "end": 94.836},
+    {"start": 94.836, "end": 94.946},
+    {"start": 94.946, "end": 95.054},
+    {"start": 95.054, "end": 95.164},
+    {"start": 95.164, "end": 95.294},
+    {"start": 95.294, "end": 95.423},
+    {"start": 95.418, "end": 95.528},
+    {"start": 95.528, "end": 95.633},
+]
+
+
+
+block = []
+
+block_image = pygame.Surface((85, 85), pygame.SRCALPHA)
+pygame.draw.rect(block_image, (255, 100, 100), (0, 0, 85, 85))
+pygame.draw.rect(block_image, (0, 0, 0), (0, 0, 85, 85), 5)
+pygame.draw.circle(block_image, (0, 0, 0), (42, 42), 17)
+pygame.draw.circle(block_image, (255, 255, 255), (42, 42), 15)
+
+def draw_block(pair):
+    
+    if pair["deleting"] == "back" or pair["deleting"] == "miss":
+        
+        
+        image = block_image.copy()
+        
+        if pair["deleting"] == "back":
+            circle_color = (255, 100, 100)
+            pygame.draw.circle(image, circle_color, (42, 42), 15)
+            
+        else:
+            circle_color = (255, 255, 255)
+            pygame.draw.circle(image, circle_color, (42, 42), 15)
+        
+        
+        
+        
+        
+        scale = 1 - pair["depth"] / 100
+        size = int(85 * scale)
+        
+        if size <= 0:
+            return
+        
+        image = pygame.transform.smoothscale(
+            image,
+            (size, size)
+        )
+        
+        rotated_left = pygame.transform.rotate(
+            image,
+            -pair["angle"]
+        )
+        
+        rotated_right = pygame.transform.rotate(
+            image,
+            pair["angle"]
+        )
+        
+        screen.blit(
+            rotated_left,
+            rotated_left.get_rect(
+                center=(pair["l_x"] + 42.5, 242.5)
+            )
+        )
+        
+        screen.blit(
+            rotated_right,
+            rotated_right.get_rect(
+                center=(pair["r_x"] + 42.5, 242.5)
+            )
+        )
+        return
+    
+    h = 85 - pair["delete_height"]
+    
+    if h < 0:
+        return
+    
+    image = pygame.Surface((85, h), pygame.SRCALPHA)
+    image.blit(
+        block_image,
+        (0, 0),
+        (0, 0, 85, h)
+    )
+    
+    rotated_left = pygame.transform.rotate(
+        image,
+        -pair["angle"]
+    )
+    rotated_right = pygame.transform.rotate(
+        image,
+        pair["angle"]
+    )
+
+    # 左
+    screen.blit(
+        rotated_left,
+        rotated_left.get_rect(
+            center=(pair["l_x"] + 42.5, 242.5)
+        )
+    )
+
+    # 右
+    screen.blit(
+        rotated_right,
+        rotated_right.get_rect(
+            center=(pair["r_x"] + 42.5, 242.5)
+        )
+    )
+
+def judgement(pair):
+    global miss_count
+    if pair["deleting"] != False:
+        return None
+    
+    left_center = pair["l_x"] + 42.5
+    right_center = pair["r_x"] + 42.5
+    
+    actual_time = pygame.mixer.music.get_pos() / 1000
+    
+    
+    difference_perfect = abs(pair["end"] - actual_time)
+    
+    difference_miss = abs(left_center - 402.5)
+    
+    if difference_perfect <= 0.1:
+        pair["l_x"] = 360
+        pair["r_x"] = 360
+        pair["angle"] = 0
+        pair["deleting"] = "back"
+        
+        text = font.render("Perfect!", True, (0, 0, 0))
+        text_time = pygame.time.get_ticks()
+        
+        return text, text_time
+    
+    elif difference_miss <= 100:
+        pair["deleting"] = "miss"
+        
+        miss_count += 1
+        
+        text = font.render("Miss!", True, (0, 0, 0))
+        text_time = pygame.time.get_ticks()
+        
+        return text, text_time
+    return None
+
+def load_result_image(filename):
+    """結果画像を画面全体に収まるサイズで読み込む。"""
+    image = pygame.image.load(os.path.join(IMAGE_DIR, filename)).convert()
+    return pygame.transform.scale(image, screen.get_size())
+
+def play_result_bgm(filename):
+    """結果画面用のBGMに切り替える。"""
+    pygame.mixer.music.load(os.path.join(BGM_DIR, filename))
+    pygame.mixer.music.play()
+
+running = True
+
+pygame.mixer.music.play()
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        
+        if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+            music_time = pygame.mixer.music.get_pos() / 1000
+            
+            target = None
+            min_difference = float("inf")
+            
+            for pair in block:
+                if pair["deleting"] != False:
+                    continue
+                
+                difference = abs(music_time - pair["end"])
+                
+                
+                if difference <= 0.55:
+                    if difference < min_difference:
+                        min_difference = difference
+                        target = pair
+            if target is not None:
+                result = judgement(target)
+                
+                if result:
+                    text, text_time = result
+    screen.blit(background, (0, 0))
+    now = pygame.time.get_ticks()
+    
+    music_time = pygame.mixer.music.get_pos() / 1000
+
+    # すべてのノーツが判定・削除された後、3秒待って結果画面へ切り替える。
+    if next_note == len(notes) and not block and result_image is None:
+        if result_delay_start is None:
+            result_delay_start = now
+        elif now - result_delay_start >= 3000:
+            # ==========================================
+            # スコア保存
+            # ==========================================
+            updated = save_best_record(miss_count)
+            
+            if miss_count >= 15:
+                result_image = load_result_image("redo.png")
+                play_result_bgm("redo.mp3")
+            elif miss_count >= 4:
+                result_image = load_result_image("good.png")
+                play_result_bgm("good.mp3")
+            else:
+                result_image = load_result_image("high_level.png")
+                play_result_bgm("high_level.mp3")
+
+    if result_image is not None:
+        screen.blit(result_image, (0, 0))
+        pygame.display.flip()
+        continue
+
+    if next_note < len(notes) and music_time >= notes[next_note]["start"]:
+        note = notes[next_note]
+        
+        travel_time = note["end"] - note["start"]
+        distance = 360 - (-90)
+        
+        speed = distance / travel_time
+        
+        block.append({
+            "l_x": -90,
+            "r_x": 800,
+            "deleting": False,
+            "move_time": 0,
+            "delete_height": 0,
+            "depth": 0,
+            "angle": 0,
+            
+            "start": note["start"],
+            "end": note["end"],
+            "speed": speed
+        })
+        print("Start time", notes[next_note]["start"],"Finish time", notes[next_note]["end"])
+        
+        next_note += 1
+    
+    if now - last_time >= 10 and block:
+        
+        for pair in block:
+            if pair["deleting"] == False:
+                elapsed = music_time - pair["start"]
+                
+                pair["l_x"] = -90 + pair["speed"] * elapsed
+                pair["r_x"] = 800 - pair["speed"] * elapsed
+                pair["angle"] = pair["speed"] * elapsed * 1
+                
+                if pair["l_x"] >= 500:
+                    pair["deleting"] = "down"
+                    miss_count += 1
+        last_time = now
+        
+        for pair in block[:]:
+            if pair["deleting"] == "back" or pair["deleting"] == "miss":
+                pair["depth"] += 5
+                
+                
+                if pair["depth"] >= 80:
+                    block.remove(pair)
+            
+            elif pair["deleting"] == "down":
+                pair["delete_height"] += 5
+                pair["angle"] = 0
+                if pair["delete_height"] >= 85:
+                    block.remove(pair)
+            
+            elif music_time >= pair["end"] + 1:
+                pair["deleting"] = "down"
+            
+    for pair in block:
+        draw_block(pair)
+    
+    if text is not None:
+        if pygame.time.get_ticks() - text_time <= 1000:
+            screen.blit(text, (350, 100))
+        else:
+            text = None
+    
+    # ==========================================
+    # ミス数とベストスコア表示
+    # ==========================================
+    
+    text1 = font.render("MISS : " + str(miss_count), True, (0, 0, 0))
+    screen.blit(text1, (30, 30))
+    
+    # ベストスコア表示
+    if best_miss != float("inf"):
+        text_best = font.render("BEST : " + str(best_miss), True, (0, 100, 0))
+    else:
+        text_best = font.render("BEST : --", True, (0, 100, 0))
+    screen.blit(text_best, (30, 70))
+    pygame.display.flip()
+pygame.quit()

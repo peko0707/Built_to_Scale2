@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Built to Scale 2</title>
+
+    <link rel="stylesheet" href="/static/css/game.css">
+</head>
+
+<body>
+
+<div class="game-container">
+
+    <!-- ゲーム画面 -->
+    <canvas
+        id="gameCanvas"
+        width="800"
+        height="600">
+    </canvas>
+
+
+    <!-- ゲームUI -->
+    <div class="game-ui">
+
+        <!-- MISS / BEST -->
+        <div class="game-info">
+
+            <div class="miss-counter">
+                MISS:
+                <span id="missCount">0</span>
+            </div>
+
+            <div class="best-record">
+                BEST:
+                <span id="bestRecord">-</span>
+            </div>
+
+        </div>
+
+
+        <!-- Perfect / Miss -->
+        <div
+            id="evaluationText"
+            class="evaluation-text">
+        </div>
+
+
+        <!-- 結果画面 -->
+        <div
+            id="resultScreen"
+            class="result-screen"
+            style="display: none;">
+
+            <div class="result-content">
+
+                <img
+                    id="resultImage"
+                    src="/static/images/high_level.png"
+                    alt="Result"
+                >
+
+                <p>
+                    MISS:
+                    <span id="finalMissCount">0</span>
+                </p>
+
+                <div class="result-buttons">
+
+                    <button
+                        type="button"
+                        onclick="location.reload()">
+                        もう一度
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="location.href='/launcher'">
+                        ランチャーへ
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!--
+    譜面データ
+    NOTES と GAME_CONFIG はここで定義される
+-->
+<script src="/static/js/game_data.js"></script>
+
+
+<!--
+    ゲーム本体
+-->
+<script src="/static/js/built_to_scale2.js"></script>
+
+</body>
+</html>

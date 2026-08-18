@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rhythm Game - ログイン</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <h1>Rhythm Game Launcher</h1>
+        <p class="subtitle">ユーザー名でログイン</p>
+        
+        <form id="loginForm">
+            <input 
+                type="text" 
+                id="username" 
+                placeholder="ユーザー名を入力"
+                required
+            >
+            <button type="submit">ログイン</button>
+        </form>
+        
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById("username").value;
+            const errorDiv = document.getElementById("errorMessage");
+            
+            try {
+                const response = await fetch("/api/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // ログイン成功
+                    window.location.href = "/launcher";
+                } else {
+                    // ログイン失敗
+                    errorDiv.textContent = data.message;
+                    errorDiv.style.display = "block";
+                }
+            } catch (error) {
+                errorDiv.textContent = "エラーが発生しました: " + error.message;
+                errorDiv.style.display = "block";
+            }
+        });
+    </script>
+</body>
+</html>
