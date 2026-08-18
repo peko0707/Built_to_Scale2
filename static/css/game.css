@@ -332,3 +332,11 @@ body {
         font-size: 18px;
     }
 }
+#resultImage {
+    display: block;
+    max-width: 500px;
+    max-height: 300px;
+    width: auto;
+    height: auto;
+    margin: 0 auto 20px auto;
+}
