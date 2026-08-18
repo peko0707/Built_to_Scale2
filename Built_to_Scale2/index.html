@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Built to Scale 2</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #333;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+            overscroll-behavior: none;
+        }
+        canvas {
+            display: block;
+            border: 2px solid #666;
+            width: min(800px, calc(100vw - 20px));
+            height: auto;
+            max-height: calc(100dvh - 20px);
+            aspect-ratio: 4 / 3;
+            object-fit: contain;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        #error {
+            color: white;
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body>
+    <script type="text/plain">
+    <script>
+        async function main() {
+            let pyodide = await loadPyodide({
+                indexURL: "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/",
+            });
+            await pyodide.loadPackage(["pygame", "numpy"]);
+            
+            const fs = await pyodide.FS;
+            
+            // Fetch and load game files
+            const mainCode = await fetch("main.py").then(r => r.text());
+            
+            fs.writeFile("/main.py", mainCode);
+            
+            await pyodide.runPythonAsync(`
+                import sys
+                sys.path.insert(0, '/')
+                exec(open('/main.py').read())
+            `);
+        }
+        main().catch(err => {
+            console.error("Error loading game:", err);
+            document.body.innerHTML += `<p>エラー: ${err.message}</p>`;
+        });
+    </script>
+    <canvas id="game" width="800" height="600"></canvas>
+    <p id="error" hidden></p>
+    <script>
+      const canvas = document.querySelector('#game'), ctx = canvas.getContext('2d');
+      const errorBox = document.querySelector('#error'), audio = new Audio('BGM/music.mp3'), background = new Image();
+      const resultImages = {
+        redo: Object.assign(new Image(), { src: 'IMAGE/redo.png' }),
+        good: Object.assign(new Image(), { src: 'IMAGE/good.png' }),
+        high_level: Object.assign(new Image(), { src: 'IMAGE/high_level.png' }),
+      };
+      // iPhone / Android ではユーザー操作からの明示的な再生が必要。
+      audio.preload = 'auto';
+      audio.playsInline = true;
+      audio.volume = 1;
+      audio.load();
+      background.src = 'IMAGE/background.png';
+      let notes = [], blocks = [], next = 0, misses = 0, started = false, message = 'クリックまたはキー入力で開始', until = Infinity;
+      const fail = e => { errorBox.hidden = false; errorBox.textContent = `読み込みエラー: ${e.message}（HTTPサーバーから開いてください）`; };
+      let resultWaitStarted = null, result = null;
+      const musicTime = () => started ? audio.currentTime : 0;
+      async function loadNotes() {
+        const response = await fetch('main.py');
+        if (!response.ok) throw new Error('main.py を取得できません');
+        const source = await response.text();
+        const found = source.match(/notes\s*=\s*(\[[\s\S]*?\])\s*\n\s*\n\s*\n?block\s*=/);
+        if (!found) throw new Error('譜面データを読み取れません');
+        // Python のリスト末尾にあるカンマを JSON 用に取り除く。
+        notes = JSON.parse(found[1].replace(/,\s*\]$/, ']'));
+      }
+      async function startGame() {
+        try {
+          audio.muted = false;
+          audio.volume = 1;
+          await audio.play();
+          // play() が成功してから開始済みにする。失敗時は次のタップで再試行できる。
+          started = true;
+          message = '';
+          until = 0;
+        } catch (error) {
+          console.error(error);
+          fail(new Error('音楽を再生できません。もう一度タップしてください。'));
+        }
+      }
+      function press() {
+        if (!started) { startGame(); return; }
+        const now = musicTime(); let target, best = Infinity;
+        for (const item of blocks) { const diff = Math.abs(now - item.end); if (!item.removing && diff <= .55 && diff < best) { target = item; best = diff; } }
+        if (!target) return;
+        target.removing = true;
+        if (Math.abs(now - target.end) <= .1) {
+          // 元版と同じく、Perfect は中央で回転を止める。
+          target.result = 'perfect';
+          message = 'Perfect!';
+        } else {
+          // Miss はその時点の位置・回転を保ったまま消える。
+          target.result = 'miss';
+          message = 'Miss!';
+          misses++;
+        }
+        until = performance.now() + 1000;
+      }
+      function update(now) {
+        while (next < notes.length && now >= notes[next].start) blocks.push({...notes[next++], removing: false, removedAt: 0});
+        for (const item of blocks) {
+          if (!item.removing && now > item.end + .4) {
+            // 押さなかったブロックは縮小ではなく、下から切れて消える。
+            item.removing = true;
+            item.result = 'down';
+            misses++;
+            message = 'Miss!';
+            until = performance.now() + 1000;
+          }
+          if (item.removing && !item.removedAt) item.removedAt = performance.now();
+        }
+        blocks = blocks.filter(item => !item.removedAt || performance.now() - item.removedAt < 170);
+      }
+      function showResult() {
+        const type = misses >= 15 ? 'redo' : misses >= 4 ? 'good' : 'high_level';
+        result = type;
+        audio.pause();
+        audio.src = `BGM/${type}.mp3`;
+        audio.currentTime = 0;
+        audio.play().catch(error => console.error('Result BGM failed:', error));
+      }
+      function drawBlock(x, angle, scale = 1, dotColor = '#fff', height = 85) {
+        ctx.save();
+        ctx.translate(x + 42.5, 242.5);
+        ctx.rotate(angle * Math.PI / 180);
+        ctx.scale(scale, scale);
+        ctx.fillStyle = '#ff6464'; ctx.strokeStyle = '#000'; ctx.lineWidth = 5;
+        ctx.fillRect(-42.5, -height / 2, 85, height);
+        ctx.strokeRect(-42.5, -height / 2, 85, height);
+        ctx.save();
+        ctx.beginPath(); ctx.rect(-42.5, -height / 2, 85, height); ctx.clip();
+        ctx.beginPath(); ctx.fillStyle = dotColor;
+        ctx.arc(0, -height / 2 + 42.5, 15, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke(); ctx.restore(); ctx.restore();
+      }
+      function frame() {
+        const now = musicTime();
+        if (!result) {
+          update(now);
+          if (next === notes.length && blocks.length === 0) {
+            if (resultWaitStarted === null) resultWaitStarted = performance.now();
+            else if (performance.now() - resultWaitStarted >= 3000) showResult();
+          }
+        }
+        ctx.clearRect(0, 0, 800, 600);
+        if (background.complete && background.naturalWidth) ctx.drawImage(background, 0, 0, 800, 600);
+        if (result) {
+          const image = resultImages[result];
+          if (image.complete && image.naturalWidth) ctx.drawImage(image, 0, 0, 800, 600);
+        } else for (const item of blocks) {
+          const p = Math.max(0, (now - item.start) / (item.end - item.start));
+          const left = -90 + 450 * p, right = 800 - 450 * p, rotation = 450 * p;
+          if (!item.removing) {
+            // Canvas は Pygame と回転の見た目の向きが逆になるため符号を反転する。
+            drawBlock(left, rotation); drawBlock(right, -rotation);
+          } else if (item.result === 'down') {
+            const cropped = Math.max(0, 85 * (1 - (performance.now() - item.removedAt) / 170));
+            drawBlock(left, 0, 1, '#fff', cropped); drawBlock(right, 0, 1, '#fff', cropped);
+          } else {
+            const scale = Math.max(.25, 1 - .75 * (performance.now() - item.removedAt) / 170);
+            if (item.result === 'perfect') {
+              drawBlock(360, 0, scale, '#ff6464'); drawBlock(360, 0, scale, '#ff6464');
+            } else {
+              drawBlock(left, rotation, scale, '#fff'); drawBlock(right, -rotation, scale, '#fff');
+            }
+          }
+        }
+        ctx.fillStyle = '#000'; ctx.font = '36px sans-serif'; ctx.fillText(`MISS : ${misses}`, 30, 60); if (message && performance.now() < until) ctx.fillText(message, 330, 130);
+        requestAnimationFrame(frame);
+      }
+      canvas.addEventListener('pointerdown', press);
+      // 長押し時のメニューやダブルタップのズームをゲーム操作に干渉させない。
+      canvas.addEventListener('contextmenu', event => event.preventDefault());
+      window.addEventListener('keydown', event => { event.preventDefault(); press(); });
+      loadNotes().then(frame).catch(fail);
+    </script>
+</body>
+</html>

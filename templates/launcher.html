@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rhythm Game - ランチャー</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="launcher-body">
+    <div class="launcher-container">
+        <!-- ヘッダー -->
+        <div class="launcher-header">
+            <h1>Rhythm Game Launcher</h1>
+            <div class="header-right">
+                <span class="username-display">ユーザー: <strong id="displayUsername"></strong></span>
+                <button id="logoutBtn" class="logout-btn">ログアウト</button>
+            </div>
+        </div>
+
+        <!-- メインコンテンツ -->
+        <div class="launcher-content">
+            <!-- ゲームボタン -->
+            <div class="games-section">
+                <h2>ゲーム選択</h2>
+                <div class="games-list">
+                    <!-- Built to Scale 2 -->
+                    <div class="game-card">
+                        <div class="game-button" onclick="launchGame('built_to_scale2')">
+                            <h3>Built to Scale 2</h3>
+                            <p class="best-record" id="record-built_to_scale2"></p>
+                        </div>
+                    </div>
+
+                    <!-- Terrible Ninja -->
+                    <div class="game-card">
+                        <div class="game-button coming-soon">
+                            <h3>Terrible Ninja</h3>
+                            <p class="status">作成中</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ランキング -->
+            <div class="ranking-section">
+                <h2>ランキング</h2>
+                <div class="ranking-box">
+                    <p class="placeholder">(ランキング内容は後で実装)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ページ読み込み時にユーザー名と記録を表示
+        window.addEventListener("load", async () => {
+            const username = "{{ username }}";
+            document.getElementById("displayUsername").textContent = username;
+            
+            // 各ゲームのrecordを取得
+            await loadGameRecords();
+        });
+
+        async function loadGameRecords() {
+            try {
+                const response = await fetch("/api/all_records");
+                const data = await response.json();
+                
+                if (data.success) {
+                    const games = data.records.games || {};
+                    
+                    // Built to Scale 2のrecordを表示
+                    const bs2Record = games.built_to_scale2;
+                    if (bs2Record && bs2Record.best_miss !== null) {
+                        document.getElementById("record-built_to_scale2").textContent = 
+                            `ベスト: ${bs2Record.best_miss} miss`;
+                    } else {
+                        document.getElementById("record-built_to_scale2").textContent = "";
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading records:", error);
+            }
+        }
+
+        function launchGame(gameName) {
+            if (gameName === "built_to_scale2") {
+                window.location.href = "/game/built_to_scale2";
+            } else if (gameName === "terrible_ninja") {
+                alert("Terrible Ninjaは作成中です");
+            }
+        }
+
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            if (confirm("ログアウトしますか？")) {
+                try {
+                    await fetch("/api/logout", { method: "POST" });
+                    window.location.href = "/";
+                } catch (error) {
+                    console.error("Error logging out:", error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
