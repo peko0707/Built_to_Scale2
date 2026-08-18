@@ -91,6 +91,10 @@ def built_to_scale2():
     
     return render_template("built_to_scale2.html", username=username)
 
+@app.route("/ranking/built_to_scale2")
+def ranking_built_to_scale2():
+    return render_template("ranking.html")
+
 # ==========================================
 # API エンドポイント
 # ==========================================
@@ -186,6 +190,72 @@ def api_get_all_records():
     
     return jsonify({"success": True, "records": records})
 
+@app.route("/api/ranking/built_to_scale2", methods=["GET"])
+def api_ranking_built_to_scale2():
+    """Built to Scale 2 のランキングを取得"""
+
+    ranking = []
+
+    # user_recordsフォルダ内のJSONを全部確認
+    if os.path.isdir(USER_RECORDS_DIR):
+
+        for filename in os.listdir(USER_RECORDS_DIR):
+
+            if not filename.endswith(".json"):
+                continue
+
+            filepath = os.path.join(
+                USER_RECORDS_DIR,
+                filename
+            )
+
+            try:
+                with open(filepath, "r", encoding="utf-8") as f:
+                    records = json.load(f)
+
+                username = records.get("username")
+
+                game_record = records.get(
+                    "games",
+                    {}
+                ).get(
+                    "built_to_scale2",
+                    {}
+                )
+
+                best_miss = game_record.get("best_miss")
+
+                # BEST記録があるユーザーだけランキングに追加
+                if username and best_miss is not None:
+
+                    ranking.append({
+                        "username": username,
+                        "best_miss": best_miss
+                    })
+
+            except Exception as e:
+
+                print(
+                    f"ランキング読み込みエラー: {filename}",
+                    e
+                )
+
+    # MISS数が少ない順に並べる
+    ranking.sort(
+        key=lambda x: x["best_miss"]
+    )
+
+    # 順位を付ける
+    for i, player in enumerate(ranking, start=1):
+
+        player["rank"] = i
+
+    return jsonify({
+        "success": True,
+        "ranking": ranking
+    })
+
+
 # ==========================================
 # エラーハンドリング
 # ==========================================
@@ -200,4 +270,3 @@ def not_found(error):
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
-
