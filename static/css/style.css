@@ -186,35 +186,53 @@ body {
 
 .games-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 270px));
+    grid-template-columns: minmax(0, 190px);
     justify-content: center;
-    gap: clamp(28px, 8vw, 74px);
+    gap: 46px;
+}
+
+.game-slot {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .game-card {
-    position: relative;
-    min-width: 0;
-    padding: 13px 13px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    color: #4e3925;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    padding: 7px;
     font-family: inherit;
-    background: #f9f0aa;
-    border: 7px solid #d7a32a;
-    border-radius: 7px;
-    box-shadow:
-        0 0 0 3px #fff5a7,
-        0 0 0 6px #8b641c,
-        8px 10px 0 rgba(116, 77, 22, 0.2);
+    background: #fffce2;
+    border-radius: 4px;
+    box-shadow: 5px 6px 0 rgba(78, 54, 31, 0.18);
     cursor: pointer;
-    transition: transform 140ms ease, filter 140ms ease;
+    transition: transform 140ms ease, filter 140ms ease, border-color 140ms ease;
+}
+
+.game-card.rank-redo {
+    border: 6px dashed #8650ad;
+}
+
+.game-card.rank-good {
+    border: 7px solid #929292;
+    box-shadow:
+        0 0 0 3px #d9d9d9,
+        5px 7px 0 rgba(78, 54, 31, 0.18);
+}
+
+.game-card.rank-high {
+    border: 7px solid #dcae28;
+    box-shadow:
+        0 0 0 3px #fff072,
+        0 0 0 6px #9c6b13,
+        6px 8px 0 rgba(78, 54, 31, 0.18);
 }
 
 .game-card:hover,
 .game-card:focus-visible {
     z-index: 2;
-    transform: translateY(-8px) rotate(-1deg) scale(1.025);
+    transform: translateY(-7px) scale(1.035);
     filter: saturate(1.1);
     outline: none;
 }
@@ -223,34 +241,14 @@ body {
     transform: translateY(-2px) scale(0.98);
 }
 
-.game-card-ninja:hover,
-.game-card-ninja:focus-visible {
-    transform: translateY(-8px) rotate(1deg) scale(1.025);
-}
-
-.game-number {
-    position: absolute;
-    top: -20px;
-    left: -20px;
-    width: 47px;
-    height: 47px;
-    display: grid;
-    place-items: center;
-    color: #fff;
-    background: #ef7850;
-    border: 4px solid #fffbd2;
-    border-radius: 50%;
-    box-shadow: 0 0 0 3px #93601e;
-    font-size: 16px;
-    font-weight: 900;
-}
-
 .game-picture {
+    width: 100%;
+    height: 100%;
     aspect-ratio: 1 / 1;
+    display: block;
     overflow: hidden;
     background: #fff;
-    border: 4px solid #8e6b2a;
-    box-shadow: inset 0 0 0 3px #fff;
+    border: 3px solid rgba(79, 58, 34, 0.65);
 }
 
 .game-picture img {
@@ -269,40 +267,24 @@ body {
     object-position: center;
 }
 
-.game-title {
-    margin-top: 13px;
-    font-size: clamp(18px, 2.8vw, 24px);
-    font-weight: 950;
-    line-height: 1.15;
-}
-
-.best-record {
-    min-height: 20px;
-    margin-top: 6px;
-    color: #9a641c;
-    font-size: 13px;
-    font-weight: 900;
-    letter-spacing: 0.04em;
-}
-
-.play-ribbon {
-    position: absolute;
-    right: 12px;
-    bottom: -18px;
-    padding: 5px 19px;
-    color: #fff;
-    background: #ef7850;
-    border: 3px solid #fff8b5;
-    border-radius: 4px;
-    box-shadow: 0 3px 0 #89531e;
+.perfect-label {
+    display: none;
+    margin-top: -3px;
+    padding: 4px 13px 3px;
+    color: #fffbd6;
+    background: linear-gradient(#d8ad25, #9b6b10);
+    border: 3px solid #fff074;
+    border-radius: 3px;
+    box-shadow: 0 3px 0 #72500e;
     font-size: 15px;
     font-weight: 1000;
-    transform: rotate(-3deg);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-shadow: 1px 1px 0 #72500e;
 }
 
-.game-card-ninja .play-ribbon {
-    background: #47a9bc;
-    transform: rotate(3deg);
+.game-slot.is-perfect .perfect-label {
+    display: block;
 }
 
 .launcher-dock {
@@ -411,7 +393,7 @@ body {
     }
 
     .games-list {
-        grid-template-columns: minmax(0, 260px);
+        grid-template-columns: minmax(0, 165px);
         gap: 48px;
     }
 

@@ -23,39 +23,37 @@
             <p class="select-message">あそびたいゲームをえらんでね！</p>
 
             <div class="games-list">
-                <button
-                    type="button"
-                    class="game-card game-card-built"
-                    onclick="launchGame('built_to_scale2')"
-                    aria-label="Built to Scale 2を開始">
-                    <span class="game-number">01</span>
-                    <span class="game-picture">
-                        <img
-                            src="{{ url_for('static', filename='images/background.png') }}"
-                            alt=""
-                        >
-                    </span>
-                    <span class="game-title">Built to Scale 2</span>
-                    <span class="best-record" id="record-built_to_scale2">はじめてプレイ</span>
-                    <span class="play-ribbon">PLAY!</span>
-                </button>
+                <div class="game-slot" id="slot-built_to_scale2">
+                    <button
+                        type="button"
+                        class="game-card game-card-built rank-redo"
+                        onclick="launchGame('built_to_scale2')"
+                        aria-label="Built to Scale 2を開始">
+                        <span class="game-picture">
+                            <img
+                                src="{{ url_for('static', filename='images/background.png') }}"
+                                alt=""
+                            >
+                        </span>
+                    </button>
+                    <span class="perfect-label" aria-hidden="true">PERFECT</span>
+                </div>
 
-                <button
-                    type="button"
-                    class="game-card game-card-ninja"
-                    onclick="launchGame('terrible_ninja')"
-                    aria-label="Terrible Ninjaを開始">
-                    <span class="game-number">02</span>
-                    <span class="game-picture">
-                        <img
-                            src="{{ url_for('static', filename='images/terrible_ninja_background1.png') }}"
-                            alt=""
-                        >
-                    </span>
-                    <span class="game-title">Terrible Ninja</span>
-                    <span class="best-record" id="record-terrible_ninja">はじめてプレイ</span>
-                    <span class="play-ribbon">PLAY!</span>
-                </button>
+                <div class="game-slot" id="slot-terrible_ninja">
+                    <button
+                        type="button"
+                        class="game-card game-card-ninja rank-redo"
+                        onclick="launchGame('terrible_ninja')"
+                        aria-label="Terrible Ninjaを開始">
+                        <span class="game-picture">
+                            <img
+                                src="{{ url_for('static', filename='images/terrible_ninja_background1.png') }}"
+                                alt=""
+                            >
+                        </span>
+                    </button>
+                    <span class="perfect-label" aria-hidden="true">PERFECT</span>
+                </div>
             </div>
         </main>
 
@@ -96,17 +94,32 @@
                 }
 
                 const games = data.records.games || {};
-                showRecord("built_to_scale2", games.built_to_scale2);
-                showRecord("terrible_ninja", games.terrible_ninja);
+                showRecord("built_to_scale2", games.built_to_scale2, 5, 15);
+                showRecord("terrible_ninja", games.terrible_ninja, 10, 20);
             } catch (error) {
                 console.error("Error loading records:", error);
             }
         }
 
-        function showRecord(gameName, record) {
-            const element = document.getElementById(`record-${gameName}`);
-            if (record && record.best_miss !== null) {
-                element.textContent = `BEST ${record.best_miss} MISS`;
+        function showRecord(gameName, record, highLevelMax, goodMax) {
+            const slot = document.getElementById(`slot-${gameName}`);
+            const card = slot.querySelector(".game-card");
+            const bestMiss = record?.best_miss;
+
+            card.classList.remove("rank-redo", "rank-good", "rank-high");
+            slot.classList.remove("is-perfect");
+
+            if (bestMiss === null || bestMiss === undefined || bestMiss > goodMax) {
+                card.classList.add("rank-redo");
+            } else if (bestMiss > highLevelMax) {
+                card.classList.add("rank-good");
+            } else {
+                card.classList.add("rank-high");
+            }
+
+            if (bestMiss === 0) {
+                slot.classList.add("is-perfect");
+                card.setAttribute("aria-label", `${card.getAttribute("aria-label")}、パーフェクト`);
             }
         }
 
