@@ -10,6 +10,7 @@ const JUDGEMENT_WINDOW = 0.2;
 const AUTO_MISS_DELAY = 0.21;
 const MESSAGE_SECONDS = 1;
 const ENEMY_ARROW_SECONDS = 0.45;
+const ENEMY_LEAD_SECONDS = 3.45;
 
 const ASSETS = {
     background1: "/static/images/terrible_ninja_background1.png",
@@ -82,7 +83,9 @@ async function initialize() {
         images.background1 = background1;
         images.background2 = background2;
         state.notes = timing.justtimes.map(time => ({ time, active: true }));
-        state.enemyTimes = timing.enemyJusttimes;
+        state.enemyTimes = timing.justtimes
+            .slice(0, -1)
+            .map(time => time - ENEMY_LEAD_SECONDS);
         state.changeTimes = timing.changeTimes;
 
         music = new Audio(ASSETS.music);

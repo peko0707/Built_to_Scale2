@@ -29,7 +29,6 @@ def main() -> None:
     justtimes = [note["justtime"] for note in notes]
     payload = {
         "justtimes": justtimes,
-        "enemyJusttimes": [round(value - 5.991, 3) for value in justtimes[:-1]],
         "changeTimes": [note["changetime"] for note in change_notes],
     }
 
