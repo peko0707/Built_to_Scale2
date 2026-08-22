@@ -1,3 +1,4 @@
+/* 全ページ共通：ブラウザ標準の余白を消し、サイズ計算を分かりやすくする */
 * {
     margin: 0;
     padding: 0;
@@ -5,6 +6,7 @@
 }
 
 body {
+    /* ログイン画面など、個別指定がないページの基本デザイン */
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     color: #fff;
@@ -15,6 +17,7 @@ body {
    ========================================== */
 
 .login-body {
+    /* ログインボックスを画面の上下左右中央に置く */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,6 +25,7 @@ body {
 }
 
 .login-container {
+    /* 半透明のガラス風ログインボックス */
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     padding: 40px;
@@ -44,6 +48,7 @@ body {
 }
 
 .login-container form {
+    /* 入力欄とボタンを縦方向に並べる */
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -64,6 +69,7 @@ body {
 }
 
 .login-container input:focus {
+    /* 入力欄を選択しているときの色 */
     outline: none;
     border-color: #4CAF50;
     background: rgba(255, 255, 255, 0.15);
@@ -82,6 +88,7 @@ body {
 }
 
 .login-container button:hover {
+    /* マウスを乗せたとき、ボタンを少し浮かせる */
     transform: translateY(-2px);
     box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
 }
@@ -101,17 +108,20 @@ body {
    ========================================== */
 
 .launcher-body {
+    /* スタート画面全体の背景。背景色を変えるなら主にここを編集する */
     min-height: 100vh;
     padding: 24px 18px 0;
     color: #503b24;
     background-color: #fff7b5;
     background-image:
+        /* 小さな水玉と斜め模様を重ねている */
         radial-gradient(circle at 10px 10px, rgba(245, 170, 36, 0.17) 2px, transparent 2.5px),
         linear-gradient(135deg, rgba(255, 255, 255, 0.3) 25%, transparent 25%);
     background-size: 22px 22px, 38px 38px;
 }
 
 .launcher-container {
+    /* スタート画面の最大横幅。920pxを変えると画面全体の幅が変わる */
     width: min(920px, 100%);
     min-height: calc(100vh - 24px);
     margin: 0 auto;
@@ -120,6 +130,7 @@ body {
 }
 
 .launcher-header {
+    /* 左にタイトル、右にユーザー名を配置するヘッダー */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -128,6 +139,7 @@ body {
 }
 
 .launcher-kicker {
+    /* タイトル上の英語「RHYTHM GAME COLLECTION」 */
     color: #db7625;
     font-size: 12px;
     font-weight: 900;
@@ -135,6 +147,7 @@ body {
 }
 
 .launcher-header h1 {
+    /* 「ゲームセレクト」の文字 */
     color: #4d3925;
     font-size: clamp(28px, 5vw, 46px);
     line-height: 1.1;
@@ -142,6 +155,7 @@ body {
 }
 
 .player-chip {
+    /* 右上のユーザー名表示 */
     min-width: 130px;
     padding: 8px 14px 8px 9px;
     display: flex;
@@ -156,6 +170,7 @@ body {
 }
 
 .player-chip-icon {
+    /* ユーザー名の左にある丸い音符アイコン */
     width: 30px;
     height: 30px;
     display: grid;
@@ -166,8 +181,11 @@ body {
 }
 
 .launcher-content {
+    /* ゲームカードが入っている、薄い黄色のメインパネル */
     flex: 1;
-    padding: 24px clamp(18px, 6vw, 70px) 42px;
+    display: flex;
+    flex-direction: column;
+    padding: 24px clamp(18px, 6vw, 70px) 12px;
     background: rgba(255, 253, 214, 0.82);
     border: 4px solid #e2bd56;
     border-radius: 24px 24px 0 0;
@@ -176,22 +194,19 @@ body {
         0 6px 0 rgba(165, 110, 32, 0.25);
 }
 
-.select-message {
-    margin-bottom: 22px;
-    text-align: center;
-    color: #aa6b1a;
-    font-size: clamp(16px, 2.4vw, 21px);
-    font-weight: 900;
-}
-
 .games-list {
+    /* ゲームを縦に並べる。190pxを変えるとカードの横幅が変わる */
     display: grid;
-    grid-template-columns: minmax(0, 190px);
+    grid-template-columns: minmax(0, 125px);
     justify-content: center;
     gap: 46px;
+
+    /* メインパネル内の余った空間を上側に入れ、カードを一番下へ寄せる */
+    margin-top: auto;
 }
 
 .game-slot {
+    /* 1ゲーム分のカードとPERFECT表示をまとめる箱 */
     position: relative;
     display: flex;
     flex-direction: column;
@@ -199,6 +214,7 @@ body {
 }
 
 .game-card {
+    /* 全ゲームカード共通：正方形、余白、影、クリック時の動き */
     width: 100%;
     aspect-ratio: 1 / 1;
     padding: 7px;
@@ -211,10 +227,12 @@ body {
 }
 
 .game-card.rank-redo {
+    /* 未クリア・redo：紫色の点線 */
     border: 6px dashed #8650ad;
 }
 
 .game-card.rank-good {
+    /* good：灰色の枠 */
     border: 7px solid #929292;
     box-shadow:
         0 0 0 3px #d9d9d9,
@@ -222,6 +240,7 @@ body {
 }
 
 .game-card.rank-high {
+    /* high_level：金色の枠 */
     border: 7px solid #dcae28;
     box-shadow:
         0 0 0 3px #fff072,
@@ -231,6 +250,7 @@ body {
 
 .game-card:hover,
 .game-card:focus-visible {
+    /* マウスやキーボードで選択したカードを少し浮かせる */
     z-index: 2;
     transform: translateY(-7px) scale(1.035);
     filter: saturate(1.1);
@@ -238,10 +258,12 @@ body {
 }
 
 .game-card:active {
+    /* カードを押している瞬間だけ少し小さくする */
     transform: translateY(-2px) scale(0.98);
 }
 
 .game-picture {
+    /* カード内側の画像表示領域 */
     width: 100%;
     height: 100%;
     aspect-ratio: 1 / 1;
@@ -252,6 +274,7 @@ body {
 }
 
 .game-picture img {
+    /* 画像を正方形からはみ出さないように切り抜く */
     width: 100%;
     height: 100%;
     display: block;
@@ -259,15 +282,19 @@ body {
 }
 
 .game-card-built .game-picture img {
+    /* Built to Scale 2だけ画像を拡大し、見せる位置を調整 */
     object-position: center 55%;
-    transform: scale(1.7);
+    transform: scale(2.4);
 }
 
 .game-card-ninja .game-picture img {
+    /* Terrible Ninjaの画像位置 */
     object-position: center;
+    transform: scale(1.65);
 }
 
 .perfect-label {
+    /* 通常はPERFECTを隠しておく */
     display: none;
     margin-top: -3px;
     padding: 4px 13px 3px;
@@ -284,10 +311,12 @@ body {
 }
 
 .game-slot.is-perfect .perfect-label {
+    /* JavaScriptがis-perfectを付けたときだけ表示する */
     display: block;
 }
 
 .launcher-dock {
+    /* 画面下部の水色メニュー */
     min-height: 105px;
     padding: 11px 20px 9px;
     display: flex;
@@ -305,6 +334,7 @@ body {
 }
 
 .dock-item {
+    /* 「ゲーム」「ランキング」「ログアウト」共通 */
     min-width: 80px;
     display: flex;
     flex-direction: column;
@@ -321,6 +351,7 @@ body {
 }
 
 .dock-icon {
+    /* 下部メニューの丸いアイコン */
     width: 58px;
     height: 58px;
     display: grid;
@@ -338,6 +369,7 @@ body {
 
 .dock-item:hover .dock-icon,
 .dock-item:focus-visible .dock-icon {
+    /* 選択中のメニューアイコンを少し浮かせる */
     transform: translateY(-4px) scale(1.08);
     background: #fff7a1;
 }
@@ -349,18 +381,22 @@ body {
 }
 
 .dock-item.is-current .dock-icon {
+    /* 現在開いている「ゲーム」メニューの色 */
     color: #fff;
     background: #1eaccf;
 }
 
 .dock-ranking-icon {
+    /* ランキングアイコンの色 */
     color: #c68813;
 }
 
 .dock-logout-icon {
+    /* ログアウトアイコンの色 */
     color: #d05243;
 }
 
+/* 画面幅が620px以下のスマートフォン向け調整 */
 @media (max-width: 620px) {
     .launcher-body {
         padding: 14px 10px 0;
@@ -389,11 +425,11 @@ body {
     }
 
     .launcher-content {
-        padding: 20px 24px 38px;
+        padding: 20px 24px 12px;
     }
 
     .games-list {
-        grid-template-columns: minmax(0, 165px);
+        grid-template-columns: minmax(0, 125px);
         gap: 48px;
     }
 

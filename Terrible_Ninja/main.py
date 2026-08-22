@@ -484,7 +484,7 @@ def judgement(current_time):
         nearest_note["justtime"] - current_time
     )
     
-    if difference <= 0.15:
+    if difference <= 0.1:
         
         justtime_notes.remove(
             nearest_note

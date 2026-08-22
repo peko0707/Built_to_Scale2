@@ -20,25 +20,8 @@
         </header>
 
         <main class="launcher-content">
-            <p class="select-message">あそびたいゲームをえらんでね！</p>
 
             <div class="games-list">
-                <div class="game-slot" id="slot-built_to_scale2">
-                    <button
-                        type="button"
-                        class="game-card game-card-built rank-redo"
-                        onclick="launchGame('built_to_scale2')"
-                        aria-label="Built to Scale 2を開始">
-                        <span class="game-picture">
-                            <img
-                                src="{{ url_for('static', filename='images/background.png') }}"
-                                alt=""
-                            >
-                        </span>
-                    </button>
-                    <span class="perfect-label" aria-hidden="true">PERFECT</span>
-                </div>
-
                 <div class="game-slot" id="slot-terrible_ninja">
                     <button
                         type="button"
@@ -54,23 +37,36 @@
                     </button>
                     <span class="perfect-label" aria-hidden="true">PERFECT</span>
                 </div>
+
+                <div class="game-slot" id="slot-built_to_scale2">
+                    <button
+                        type="button"
+                        class="game-card game-card-built rank-redo"
+                        onclick="launchGame('built_to_scale2')"
+                        aria-label="Built to Scale 2を開始">
+                        <span class="game-picture">
+                            <img
+                                src="{{ url_for('static', filename='images/background.png') }}"
+                                alt=""
+                            >
+                        </span>
+                    </button>
+                    <span class="perfect-label" aria-hidden="true">PERFECT</span>
+                </div>
             </div>
         </main>
 
         <nav class="launcher-dock" aria-label="メインメニュー">
             <button type="button" class="dock-item is-current" aria-current="page">
                 <span class="dock-icon dock-game-icon">★</span>
-                <span>ゲーム</span>
             </button>
 
             <a class="dock-item" href="/ranking/built_to_scale2">
                 <span class="dock-icon dock-ranking-icon">♛</span>
-                <span>ランキング</span>
             </a>
 
             <button type="button" id="logoutBtn" class="dock-item">
                 <span class="dock-icon dock-logout-icon">↪</span>
-                <span>ログアウト</span>
             </button>
         </nav>
     </div>
