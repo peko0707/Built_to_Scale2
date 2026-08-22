@@ -3,111 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rhythm Game - ランチャー</title>
+    <title>リズムゲームセレクト</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="launcher-body">
     <div class="launcher-container">
-        <!-- ヘッダー -->
-        <div class="launcher-header">
-            <h1>Rhythm Game Launcher</h1>
-            <div class="header-right">
-                <span class="username-display">ユーザー: <strong id="displayUsername"></strong></span>
-                <button id="logoutBtn" class="logout-btn">ログアウト</button>
+        <header class="launcher-header">
+            <div>
+                <p class="launcher-kicker">RHYTHM GAME COLLECTION</p>
+                <h1>ゲームセレクト</h1>
             </div>
-        </div>
-
-        <!-- メインコンテンツ -->
-        <div class="launcher-content">
-            <!-- ゲームボタン -->
-            <div class="games-section">
-                <h2>ゲーム選択</h2>
-                <div class="games-list">
-                    <!-- Built to Scale 2 -->
-                    <div class="game-card">
-                        <div class="game-button" onclick="launchGame('built_to_scale2')">
-                            <h3>Built to Scale 2</h3>
-                            <p class="best-record" id="record-built_to_scale2"></p>
-                        </div>
-                    </div>
-
-                    <!-- Terrible Ninja -->
-                    <div class="game-card">
-                        <div class="game-button" onclick="launchGame('terrible_ninja')">
-                            <h3>Terrible Ninja</h3>
-                            <p class="best-record" id="record-terrible_ninja"></p>
-                        </div>
-                    </div>
-                </div>
+            <div class="player-chip" aria-label="ログイン中のユーザー">
+                <span class="player-chip-icon">♪</span>
+                <span id="displayUsername"></span>
             </div>
+        </header>
 
-            <!-- ランキング -->
-            <div class="ranking-section">
-                <h2>ランキング</h2>
-                <div class="ranking-box">
-                    <a href="/ranking/built_to_scale2">
-                        🏆 ランキング
-                    </a>
+        <main class="launcher-content">
+            <p class="select-message">あそびたいゲームをえらんでね！</p>
+
+            <div class="games-list">
+                <button
+                    type="button"
+                    class="game-card game-card-built"
+                    onclick="launchGame('built_to_scale2')"
+                    aria-label="Built to Scale 2を開始">
+                    <span class="game-number">01</span>
+                    <span class="game-picture">
+                        <img
+                            src="{{ url_for('static', filename='images/background.png') }}"
+                            alt=""
+                        >
+                    </span>
+                    <span class="game-title">Built to Scale 2</span>
+                    <span class="best-record" id="record-built_to_scale2">はじめてプレイ</span>
+                    <span class="play-ribbon">PLAY!</span>
+                </button>
+
+                <button
+                    type="button"
+                    class="game-card game-card-ninja"
+                    onclick="launchGame('terrible_ninja')"
+                    aria-label="Terrible Ninjaを開始">
+                    <span class="game-number">02</span>
+                    <span class="game-picture">
+                        <img
+                            src="{{ url_for('static', filename='images/terrible_ninja_background1.png') }}"
+                            alt=""
+                        >
+                    </span>
+                    <span class="game-title">Terrible Ninja</span>
+                    <span class="best-record" id="record-terrible_ninja">はじめてプレイ</span>
+                    <span class="play-ribbon">PLAY!</span>
+                </button>
             </div>
-        </div>
+        </main>
+
+        <nav class="launcher-dock" aria-label="メインメニュー">
+            <button type="button" class="dock-item is-current" aria-current="page">
+                <span class="dock-icon dock-game-icon">★</span>
+                <span>ゲーム</span>
+            </button>
+
+            <a class="dock-item" href="/ranking/built_to_scale2">
+                <span class="dock-icon dock-ranking-icon">♛</span>
+                <span>ランキング</span>
+            </a>
+
+            <button type="button" id="logoutBtn" class="dock-item">
+                <span class="dock-icon dock-logout-icon">↪</span>
+                <span>ログアウト</span>
+            </button>
+        </nav>
     </div>
 
     <script>
-        // ページ読み込み時にユーザー名と記録を表示
-        window.addEventListener("load", async () => {
-            const username = "{{ username }}";
-            document.getElementById("displayUsername").textContent = username;
-            
-            // 各ゲームのrecordを取得
+        window.addEventListener("load", loadLauncher);
+
+        async function loadLauncher() {
+            document.getElementById("displayUsername").textContent =
+                {{ username | tojson }};
             await loadGameRecords();
-        });
+        }
 
         async function loadGameRecords() {
             try {
                 const response = await fetch("/api/all_records");
                 const data = await response.json();
-                
-                if (data.success) {
-                    const games = data.records.games || {};
-                    
-                    // Built to Scale 2のrecordを表示
-                    const bs2Record = games.built_to_scale2;
-                    if (bs2Record && bs2Record.best_miss !== null) {
-                        document.getElementById("record-built_to_scale2").textContent = 
-                            `ベスト: ${bs2Record.best_miss} miss`;
-                    } else {
-                        document.getElementById("record-built_to_scale2").textContent = "";
-                    }
 
-                    const terribleNinjaRecord = games.terrible_ninja;
-                    if (terribleNinjaRecord && terribleNinjaRecord.best_miss !== null) {
-                        document.getElementById("record-terrible_ninja").textContent =
-                            `ベスト: ${terribleNinjaRecord.best_miss} miss`;
-                    } else {
-                        document.getElementById("record-terrible_ninja").textContent = "";
-                    }
+                if (!data.success) {
+                    return;
                 }
+
+                const games = data.records.games || {};
+                showRecord("built_to_scale2", games.built_to_scale2);
+                showRecord("terrible_ninja", games.terrible_ninja);
             } catch (error) {
                 console.error("Error loading records:", error);
             }
         }
 
+        function showRecord(gameName, record) {
+            const element = document.getElementById(`record-${gameName}`);
+            if (record && record.best_miss !== null) {
+                element.textContent = `BEST ${record.best_miss} MISS`;
+            }
+        }
+
         function launchGame(gameName) {
-            if (gameName === "built_to_scale2") {
-                window.location.href = "/game/built_to_scale2";
-            } else if (gameName === "terrible_ninja") {
-                window.location.href = "/game/terrible_ninja";
+            const gamePaths = {
+                built_to_scale2: "/game/built_to_scale2",
+                terrible_ninja: "/game/terrible_ninja"
+            };
+
+            if (gamePaths[gameName]) {
+                window.location.href = gamePaths[gameName];
             }
         }
 
         document.getElementById("logoutBtn").addEventListener("click", async () => {
-            if (confirm("ログアウトしますか？")) {
-                try {
-                    await fetch("/api/logout", { method: "POST" });
-                    window.location.href = "/";
-                } catch (error) {
-                    console.error("Error logging out:", error);
-                }
+            if (!confirm("ログアウトしますか？")) {
+                return;
+            }
+
+            try {
+                await fetch("/api/logout", { method: "POST" });
+                window.location.href = "/";
+            } catch (error) {
+                console.error("Error logging out:", error);
             }
         });
     </script>

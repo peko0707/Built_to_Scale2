@@ -102,160 +102,328 @@ body {
 
 .launcher-body {
     min-height: 100vh;
-    padding: 20px;
+    padding: 24px 18px 0;
+    color: #503b24;
+    background-color: #fff7b5;
+    background-image:
+        radial-gradient(circle at 10px 10px, rgba(245, 170, 36, 0.17) 2px, transparent 2.5px),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.3) 25%, transparent 25%);
+    background-size: 22px 22px, 38px 38px;
 }
 
 .launcher-container {
-    max-width: 1400px;
+    width: min(920px, 100%);
+    min-height: calc(100vh - 24px);
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .launcher-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
+    gap: 20px;
+    padding: 8px 12px 18px;
+}
+
+.launcher-kicker {
+    color: #db7625;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
 }
 
 .launcher-header h1 {
-    font-size: 36px;
+    color: #4d3925;
+    font-size: clamp(28px, 5vw, 46px);
+    line-height: 1.1;
+    text-shadow: 2px 2px 0 #fff;
 }
 
-.header-right {
+.player-chip {
+    min-width: 130px;
+    padding: 8px 14px 8px 9px;
     display: flex;
-    gap: 20px;
     align-items: center;
+    gap: 8px;
+    color: #5b482e;
+    background: rgba(255, 255, 255, 0.75);
+    border: 3px solid #e3bd55;
+    border-radius: 999px;
+    box-shadow: 0 3px 0 #b78230;
+    font-weight: 800;
 }
 
-.username-display {
-    font-size: 16px;
-    color: #aaa;
-}
-
-.logout-btn {
-    padding: 10px 20px;
-    background: #ff6b6b;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
-}
-
-.logout-btn:hover {
-    background: #ff5252;
-    transform: translateY(-2px);
+.player-chip-icon {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: #49b9cf;
+    border-radius: 50%;
 }
 
 .launcher-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
+    flex: 1;
+    padding: 24px clamp(18px, 6vw, 70px) 42px;
+    background: rgba(255, 253, 214, 0.82);
+    border: 4px solid #e2bd56;
+    border-radius: 24px 24px 0 0;
+    box-shadow:
+        inset 0 0 0 4px rgba(255, 255, 255, 0.8),
+        0 6px 0 rgba(165, 110, 32, 0.25);
 }
 
-/* ゲーム選択セクション */
-.games-section {
-    grid-column: 1;
-}
-
-.games-section h2,
-.ranking-section h2 {
-    margin-bottom: 20px;
-    font-size: 28px;
-    color: #fff;
+.select-message {
+    margin-bottom: 22px;
+    text-align: center;
+    color: #aa6b1a;
+    font-size: clamp(16px, 2.4vw, 21px);
+    font-weight: 900;
 }
 
 .games-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 270px));
+    justify-content: center;
+    gap: clamp(28px, 8vw, 74px);
 }
 
 .game-card {
-    width: 100%;
-}
-
-.game-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 20px 25px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    position: relative;
+    min-width: 0;
+    padding: 13px 13px 32px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 2px solid transparent;
+    flex-direction: column;
+    align-items: stretch;
+    color: #4e3925;
+    font-family: inherit;
+    background: #f9f0aa;
+    border: 7px solid #d7a32a;
+    border-radius: 7px;
+    box-shadow:
+        0 0 0 3px #fff5a7,
+        0 0 0 6px #8b641c,
+        8px 10px 0 rgba(116, 77, 22, 0.2);
+    cursor: pointer;
+    transition: transform 140ms ease, filter 140ms ease;
 }
 
-.game-button:hover:not(.coming-soon) {
-    transform: translateX(5px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-    border-color: #FFD700;
+.game-card:hover,
+.game-card:focus-visible {
+    z-index: 2;
+    transform: translateY(-8px) rotate(-1deg) scale(1.025);
+    filter: saturate(1.1);
+    outline: none;
 }
 
-.game-button h3 {
-    font-size: 24px;
-    margin-bottom: 5px;
+.game-card:active {
+    transform: translateY(-2px) scale(0.98);
 }
 
-.game-button p {
-    margin: 0;
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.8);
+.game-card-ninja:hover,
+.game-card-ninja:focus-visible {
+    transform: translateY(-8px) rotate(1deg) scale(1.025);
+}
+
+.game-number {
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    width: 47px;
+    height: 47px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: #ef7850;
+    border: 4px solid #fffbd2;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px #93601e;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.game-picture {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #fff;
+    border: 4px solid #8e6b2a;
+    box-shadow: inset 0 0 0 3px #fff;
+}
+
+.game-picture img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.game-card-built .game-picture img {
+    object-position: center 55%;
+    transform: scale(1.7);
+}
+
+.game-card-ninja .game-picture img {
+    object-position: center;
+}
+
+.game-title {
+    margin-top: 13px;
+    font-size: clamp(18px, 2.8vw, 24px);
+    font-weight: 950;
+    line-height: 1.15;
 }
 
 .best-record {
-    color: #FFD700 !important;
-    font-weight: bold;
+    min-height: 20px;
+    margin-top: 6px;
+    color: #9a641c;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
 }
 
-.game-button.coming-soon {
-    background: linear-gradient(135deg, #999999 0%, #666666 100%);
-    cursor: not-allowed;
-    opacity: 0.7;
+.play-ribbon {
+    position: absolute;
+    right: 12px;
+    bottom: -18px;
+    padding: 5px 19px;
+    color: #fff;
+    background: #ef7850;
+    border: 3px solid #fff8b5;
+    border-radius: 4px;
+    box-shadow: 0 3px 0 #89531e;
+    font-size: 15px;
+    font-weight: 1000;
+    transform: rotate(-3deg);
 }
 
-.game-button.coming-soon .status {
-    margin-left: auto;
-    color: #ff9999;
-    font-weight: bold;
+.game-card-ninja .play-ribbon {
+    background: #47a9bc;
+    transform: rotate(3deg);
 }
 
-/* ランキングセクション */
-.ranking-section {
-    grid-column: 2;
-}
-
-.ranking-box {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 30px;
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    height: 100%;
+.launcher-dock {
+    min-height: 105px;
+    padding: 11px 20px 9px;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: flex-start;
+    gap: clamp(30px, 9vw, 90px);
+    background:
+        radial-gradient(circle, rgba(255,255,255,0.3) 1.5px, transparent 2px),
+        linear-gradient(#69cee2, #39a9c8);
+    background-size: 14px 14px, auto;
+    border: 4px solid #24758f;
+    border-bottom: 0;
+    border-radius: 0;
+    box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.45);
 }
 
-.placeholder {
-    color: #aaa;
-    text-align: center;
-    font-size: 16px;
+.dock-item {
+    min-width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #173d50;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 900;
+    text-decoration: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
 }
 
-/* レスポンシブ */
-@media (max-width: 1024px) {
-    .launcher-content {
-        grid-template-columns: 1fr;
+.dock-icon {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
+    color: #263948;
+    background: #fffdf0;
+    border: 4px solid #244d63;
+    border-radius: 50%;
+    box-shadow:
+        inset 0 -5px 0 rgba(0, 0, 0, 0.12),
+        0 3px 0 rgba(20, 69, 88, 0.45);
+    font-size: 27px;
+    transition: transform 130ms ease, background 130ms ease;
+}
+
+.dock-item:hover .dock-icon,
+.dock-item:focus-visible .dock-icon {
+    transform: translateY(-4px) scale(1.08);
+    background: #fff7a1;
+}
+
+.dock-item:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+    border-radius: 8px;
+}
+
+.dock-item.is-current .dock-icon {
+    color: #fff;
+    background: #1eaccf;
+}
+
+.dock-ranking-icon {
+    color: #c68813;
+}
+
+.dock-logout-icon {
+    color: #d05243;
+}
+
+@media (max-width: 620px) {
+    .launcher-body {
+        padding: 14px 10px 0;
     }
 
-    .ranking-section {
-        grid-column: 1;
+    .launcher-header {
+        align-items: flex-end;
+        padding-inline: 5px;
+    }
+
+    .launcher-kicker {
+        font-size: 9px;
+    }
+
+    .player-chip {
+        min-width: auto;
+        max-width: 46%;
+        padding-right: 10px;
+        font-size: 13px;
+    }
+
+    #displayUsername {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .launcher-content {
+        padding: 20px 24px 38px;
+    }
+
+    .games-list {
+        grid-template-columns: minmax(0, 260px);
+        gap: 48px;
+    }
+
+    .launcher-dock {
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        gap: 16px;
+        padding-inline: 8px;
+    }
+
+    .dock-item {
+        min-width: 76px;
     }
 }
