@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terrible Ninja</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
+</head>
+<body>
+    <main class="game-container">
+        <canvas id="gameCanvas" width="800" height="600" aria-label="Terrible Ninja game"></canvas>
+
+        <div class="game-ui">
+            <div class="game-info">
+                <div class="miss-counter">MISS: <span id="missCount">0</span></div>
+                <div class="best-record">BEST: <span id="bestRecord">-</span></div>
+            </div>
+
+            <div id="startMessage">クリックまたはキー入力でスタート</div>
+            <div id="evaluationText" class="evaluation-text"></div>
+
+            <section id="resultScreen" class="result-screen" hidden>
+                <div class="result-content">
+                    <img id="resultImage" src="" alt="ゲーム結果">
+                    <p>MISS: <span id="finalMissCount">0</span></p>
+                    <div class="result-buttons">
+                        <button type="button" onclick="location.reload()">もう一度</button>
+                        <button type="button" onclick="location.href='/launcher'">ランチャーへ</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/terrible_ninja.js') }}" defer></script>
+</body>
+</html>

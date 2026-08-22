@@ -33,9 +33,9 @@
 
                     <!-- Terrible Ninja -->
                     <div class="game-card">
-                        <div class="game-button coming-soon">
+                        <div class="game-button" onclick="launchGame('terrible_ninja')">
                             <h3>Terrible Ninja</h3>
-                            <p class="status">作成中</p>
+                            <p class="best-record" id="record-terrible_ninja"></p>
                         </div>
                     </div>
                 </div>
@@ -78,6 +78,14 @@
                     } else {
                         document.getElementById("record-built_to_scale2").textContent = "";
                     }
+
+                    const terribleNinjaRecord = games.terrible_ninja;
+                    if (terribleNinjaRecord && terribleNinjaRecord.best_miss !== null) {
+                        document.getElementById("record-terrible_ninja").textContent =
+                            `ベスト: ${terribleNinjaRecord.best_miss} miss`;
+                    } else {
+                        document.getElementById("record-terrible_ninja").textContent = "";
+                    }
                 }
             } catch (error) {
                 console.error("Error loading records:", error);
@@ -88,7 +96,7 @@
             if (gameName === "built_to_scale2") {
                 window.location.href = "/game/built_to_scale2";
             } else if (gameName === "terrible_ninja") {
-                alert("Terrible Ninjaは作成中です");
+                window.location.href = "/game/terrible_ninja";
             }
         }
 

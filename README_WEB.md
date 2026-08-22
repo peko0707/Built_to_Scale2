@@ -1,5 +1,23 @@
 # Rhythm Game Web - セットアップガイド
 
+## Terrible Ninja
+
+Terrible Ninjaは既存のFlaskサーバーとCanvasで動作します。画像・音声はほかのWebゲームと同じく、`static/images` と `static/audio` から配信します。
+
+譜面を `Terrible_Ninja/main.py` で変更した場合は、Web用タイミングデータを同期してください。
+
+```powershell
+python scripts/export_terrible_ninja_data.py
+```
+
+サーバーを起動してログインし、ランチャーからTerrible Ninjaを選択します。
+
+```powershell
+python web_server.py
+```
+
+直接開く場合のURLは `http://localhost:5000/game/terrible_ninja` です。
+
 ウェブ版リズムゲームへようこそ！
 
 ## セットアップ手順

@@ -189,6 +189,10 @@ body {
     pointer-events: auto;
 }
 
+.result-screen[hidden] {
+    display: none;
+}
+
 .result-content {
     text-align: center;
 

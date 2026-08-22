@@ -91,6 +91,16 @@ def built_to_scale2():
     
     return render_template("built_to_scale2.html", username=username)
 
+@app.route("/game/terrible_ninja")
+def terrible_ninja():
+    """Terrible Ninja ゲーム画面"""
+    username = session.get("username")
+
+    if not username:
+        return render_template("login.html")
+
+    return render_template("terrible_ninja.html", username=username)
+
 @app.route("/ranking/built_to_scale2")
 def ranking_built_to_scale2():
     return render_template("ranking.html")
