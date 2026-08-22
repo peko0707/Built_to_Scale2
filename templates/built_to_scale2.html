@@ -71,26 +71,17 @@
                 class="result-screen"
                 style="display: none;">
 
-                <div class="result-content">
-
-
-                    <!-- 結果タイトル -->
-
-                    <h2 id="resultTitle"></h2>
-
-
-                    <!-- 結果画像 -->
-
+                <div class="result-content result-card">
                     <img
                         id="resultImage"
                         src="/static/images/high_level.png"
                         alt="Result"
                     >
 
+                    <div id="resultName" class="result-name">組み立ての評価</div>
+                    <div id="resultMessage" class="result-message"></div>
 
-                    <!-- MISS数 -->
-
-                    <p>
+                    <p class="result-miss">
                         MISS COUNT:
                         <span id="finalMissCount">
                             0
@@ -98,9 +89,7 @@
                     </p>
 
 
-                    <!-- ボタン -->
-
-                    <div class="result-buttons">
+                    <div class="result-buttons result-actions">
 
                         <button
                             type="button"

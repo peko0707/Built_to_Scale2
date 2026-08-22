@@ -956,7 +956,7 @@ while running:
             result_image_name = "good.png"
             result_bgm_name = "good.mp3"
         else:
-            result_image_name = "background.png"
+            result_image_name = "redo.png"
             result_bgm_name = "redo.mp3"
 
         result_image = load_result_image(result_image_name)

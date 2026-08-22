@@ -20,10 +20,12 @@
             <div id="evaluationText" class="evaluation-text"></div>
 
             <section id="resultScreen" class="result-screen" hidden>
-                <div class="result-content">
+                <div class="result-content result-card">
                     <img id="resultImage" src="" alt="ゲーム結果">
-                    <p>MISS: <span id="finalMissCount">0</span></p>
-                    <div class="result-buttons">
+                    <div id="resultName" class="result-name">トノからのひとこと</div>
+                    <div id="resultMessage" class="result-message"></div>
+                    <p class="result-miss">MISS: <span id="finalMissCount">0</span></p>
+                    <div class="result-buttons result-actions">
                         <button type="button" onclick="location.reload()">もう一度</button>
                         <button type="button" onclick="location.href='/launcher'">ランチャーへ</button>
                     </div>

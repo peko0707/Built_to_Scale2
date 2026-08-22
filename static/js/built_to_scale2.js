@@ -8,6 +8,12 @@ const ctx = canvas.getContext("2d");
 const background = new Image();
 background.src = "/static/images/background.png";
 
+const RESULT_MESSAGES = Object.freeze({
+    redo: "全然組み立って\nないですよ～\n(⌒∇⌒)",
+    good: "まぁまぁ組み立った\nなかなかやるやんけ\n( ･´ｰ･｀)",
+    highLevel: "すごすぎる！？\n普通に尊敬します。\n(ﾟдﾟ)！"
+});
+
 
 /* =========================================
    ゲーム設定
@@ -787,6 +793,8 @@ async function showResult() {
     // 結果画像・結果音声
     let resultImagePath;
     let resultAudioPath;
+    let resultMessage;
+    let resultRank;
 
 
     if (gameState.missCount >= 16) {
@@ -797,6 +805,11 @@ async function showResult() {
 
         resultAudioPath =
             "/static/audio/redo.mp3";
+
+        resultMessage =
+            RESULT_MESSAGES.redo;
+
+        resultRank = "redo";
 
     }
 
@@ -809,6 +822,11 @@ async function showResult() {
         resultAudioPath =
             "/static/audio/good.mp3";
 
+        resultMessage =
+            RESULT_MESSAGES.good;
+
+        resultRank = "good";
+
     }
 
     else {
@@ -819,6 +837,11 @@ async function showResult() {
 
         resultAudioPath =
             "/static/audio/high_level.mp3";
+
+        resultMessage =
+            RESULT_MESSAGES.highLevel;
+
+        resultRank = "high-level";
     }
 
 
@@ -826,6 +849,12 @@ async function showResult() {
     if (resultImage) {
         resultImage.src = resultImagePath;
     }
+
+    document.getElementById("resultName").textContent =
+        "組み立ての評価";
+    document.getElementById("resultMessage").textContent =
+        resultMessage;
+    resultScreen.dataset.rank = resultRank;
 
 
     // 結果音声を再生

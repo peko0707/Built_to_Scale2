@@ -20,15 +20,18 @@ const ASSETS = {
     results: {
         high: {
             image: "/static/images/high_level.png",
-            audio: "/static/audio/high_level.mp3"
+            audio: "/static/audio/high_level.mp3",
+            message: "え！？ めちゃめちゃすごい！？\nめちゃくちゃ尊敬します。\n((*´▽｀*)"
         },
         good: {
             image: "/static/images/good.png",
-            audio: "/static/audio/good.mp3"
+            audio: "/static/audio/good.mp3",
+            message: "ちょっと飛んできたけど\n基本的にふせげてた！ ！\n(*'ω'*)"
         },
         redo: {
-            image: "/static/images/background.png",
-            audio: "/static/audio/redo.mp3"
+            image: "/static/images/redo.png",
+            audio: "/static/audio/redo.mp3",
+            message: "こっちにめっちゃ矢\n飛んできてるんですけど！？\n( ˘•ω•˘ )"
         }
     }
 };
@@ -414,17 +417,25 @@ async function showResult() {
     await saveRecord();
 
     let result;
+    let resultRank;
     if (state.missCount <= 10) {
         result = ASSETS.results.high;
+        resultRank = "high-level";
     } else if (state.missCount <= 20) {
         result = ASSETS.results.good;
+        resultRank = "good";
     } else {
         result = ASSETS.results.redo;
+        resultRank = "redo";
     }
 
     document.getElementById("finalMissCount").textContent = state.missCount;
     document.getElementById("resultImage").src = result.image;
-    document.getElementById("resultScreen").hidden = false;
+    document.getElementById("resultName").textContent = "トノからのひとこと";
+    document.getElementById("resultMessage").textContent = result.message;
+    const resultScreen = document.getElementById("resultScreen");
+    resultScreen.dataset.rank = resultRank;
+    resultScreen.hidden = false;
 
     resultAudio = new Audio(result.audio);
     resultAudio.preload = "auto";
